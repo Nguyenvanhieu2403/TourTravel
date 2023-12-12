@@ -15,5 +15,6 @@
     </div>
 </div>
 
+<h1>test</h1>
 
 <?php require('includes/footer.html'); ?>

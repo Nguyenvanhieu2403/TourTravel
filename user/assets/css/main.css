@@ -75,5 +75,61 @@ h1 {
     text-decoration: none;
     font-size: 20px;
   }
+
+  .desti--items {
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .desti-content {
+    position: relative;
+  }
+
+  .desti-text {
+    position: absolute;
+    top: 70%;
+    padding-left: 26%;
+    text-align: center;
+  } 
+
+  .desti_places {
+    display: inline-block;
+    padding-top: 5px;
+    display: none;
+  }
+
+  .desti--items:hover .desti-text {
+    top: 60%;
+  }
+
+  .desti-title::before {
+    position: absolute;
+    content: "";
+    height: 3px;
+    width: 83px;
+    background: #ff4838;  
+    left: 65%;
+    transform: translateX(-50%);
+    top: 54%;
+    opacity: 0;
+    transition: all .3s;
+  }
+
+  .desti--items:hover .desti-title::before {
+    opacity: 1;
+  }
+
+
+  .desti--items:hover .desti_places {
+    display: block;
+  }
+
+  .desti--items img {
+    width: 100%;
+  }
+
+  .desti--items:hover img {
+    transform: scale(1.01);
+  }
   
   /* End Destination */

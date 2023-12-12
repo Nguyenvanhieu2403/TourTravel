@@ -15,5 +15,54 @@
     </div>
 </div>
 
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-6 desti--items">
+            <div class="desti-content ">
+                <img src="../../../user/assets/img/destination/destination_1.png" alt="">
+                <div class="desti-text text-light">
+                    <h2 class="text-center ml-3 desti-title">Düsseldorf</h2>
+                    <p class="desti_places">45 Places</p>
+                </div>
+                <!-- <p class="text-center">Düsseldorf</p> -->
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 desti--items">
+            <div class="desti-content ">
+                <img src="../../../user/assets/img/destination/destination_1.png" alt="">
+                <div class="desti-text text-light">
+                    <h2 class="text-center ml-3 desti-title">Düsseldorf</h2>
+                    <p class="desti_places">45 Places</p>
+                </div>
+                <!-- <p class="text-center">Düsseldorf</p> -->
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 desti--items">
+            <div class="desti-content ">
+                <img src="../../../user/assets/img/destination/destination_1.png" alt="">
+                <div class="desti-text text-light">
+                    <h2 class="text-center ml-3 desti-title">Düsseldorf</h2>
+                    <p class="desti_places">45 Places</p>
+                </div>
+                <!-- <p class="text-center">Düsseldorf</p> -->
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 desti--items">
+            <div class="desti-content ">
+                <img src="../../../user/assets/img/destination/destination_1.png" alt="">
+                <div class="desti-text text-light">
+                    <h2 class="text-center ml-3 desti-title">Düsseldorf</h2>
+                    <p class="desti_places">45 Places</p>
+                </div>
+                <!-- <p class="text-center">Düsseldorf</p> -->
+            </div>
+        </div>
+        
+    </div>
+</div>
+
 
 <?php require('includes/footer.html'); ?>

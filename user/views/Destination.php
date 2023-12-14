@@ -1,4 +1,7 @@
 <?php require('includes/header.html'); ?>
+<?php
+	include_once('../assets/database/ConnectToSql.php');
+ ?>
 <div class="header-destination ">
     <div class="content">
         <h1 class="text-center fw-bold text-light">Destination</h1>
@@ -13,54 +16,32 @@
             </h2>
         </div>
     </div>
-</div>
+</div>  
+
+<?php
+    $query = "SELECT d.*, COUNT(t.Id) AS NumberOfTours FROM tourtravel.destination d left JOIN tourtravel.tour t ON d.City = t.City GROUP BY d.City, d.Id, d.Image; ";
+	$sql_destination = mysqli_query($con,$query); 
+?>
 
 <div class="container mt-5 mb-5">
     <div class="row">
+    <?php
+	while($row_destination = mysqli_fetch_array($sql_destination)){ 
+	?>
         <div class="col-lg-3 col-md-4 col-sm-6 desti--items">
             <div class="desti-content ">
-                <img src="../../../user/assets/img/destination/destination_1.png" alt="">
-                <div class="desti-text text-light">
-                    <h2 class="text-center ml-3 desti-title">Düsseldorf</h2>
-                    <p class="desti_places">45 Places</p>
+                <div class="desti-content__img">
+                    <img src="<?php echo $row_destination['Image'] ?>" alt="">
                 </div>
-                <!-- <p class="text-center">Düsseldorf</p> -->
+                <div class="desti-text text-light">
+                    <h2 class="text-center ml-3 desti-title"><?php echo $row_destination['City'] ?></h2>
+                    <p class="desti_places"><?php echo $row_destination['NumberOfTours'] ?> Places</p>
+                </div>
             </div>
         </div>
-
-        <div class="col-lg-3 col-md-4 col-sm-6 desti--items">
-            <div class="desti-content ">
-                <img src="../../../user/assets/img/destination/destination_1.png" alt="">
-                <div class="desti-text text-light">
-                    <h2 class="text-center ml-3 desti-title">Düsseldorf</h2>
-                    <p class="desti_places">45 Places</p>
-                </div>
-                <!-- <p class="text-center">Düsseldorf</p> -->
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-sm-6 desti--items">
-            <div class="desti-content ">
-                <img src="../../../user/assets/img/destination/destination_1.png" alt="">
-                <div class="desti-text text-light">
-                    <h2 class="text-center ml-3 desti-title">Düsseldorf</h2>
-                    <p class="desti_places">45 Places</p>
-                </div>
-                <!-- <p class="text-center">Düsseldorf</p> -->
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-sm-6 desti--items">
-            <div class="desti-content ">
-                <img src="../../../user/assets/img/destination/destination_1.png" alt="">
-                <div class="desti-text text-light">
-                    <h2 class="text-center ml-3 desti-title">Düsseldorf</h2>
-                    <p class="desti_places">45 Places</p>
-                </div>
-                <!-- <p class="text-center">Düsseldorf</p> -->
-            </div>
-        </div>
-        
+    <?php
+        } 
+    ?>
     </div>
 </div>
 

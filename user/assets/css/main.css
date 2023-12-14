@@ -1,6 +1,15 @@
-h1 {
-  color: red;
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
+
+@media (min-width: 740px) {
+
+}
+@media (min-width: 1113px) {}
+@media (min-width: 740px) and (max-width: 1023px) {}
+@media (min-width: 1024px) and (max-width: 1239px) {}
 
 /* footer */
 
@@ -9,6 +18,7 @@ h1 {
   color: white;
   padding-top: 70px;
   font-family: "Barlow", sans-serif;
+  background-image: url('https://demo.egenslab.com/html/tourxpro/demo/assets/images/banner/footer-bg.png');
 }
 
 .footer h3 {
@@ -20,20 +30,42 @@ h1 {
   color: white;
 }
 
+.footer .icon {
+  display: inline-flex;
+  padding: 8px 0;
+  border-radius: 50px;
+  background-color:#ff4838;
+  width: 40px;
+  height: 40px;
+  justify-content: center;
+  transition: color 0.5s linear;
+}
+
+.footer .icon:hover {
+  background-color: #2d373c;
+  border: 1px solid #ff4838;
+  color: #ff4838;
+}
+
 .footer li {
   padding-top: 12px;
 }
 
 .footer .gallery-img {
-  display: grid;
-  grid-gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.footer .gallery-img img {
+  margin: 0 0.75rem;
 }
 
 .footer svg {
-  width: 30px;
-  height: 30px;
-  margin: 5px 25px 5px 0;
+  width: 15px;
+  height: 22px;
 }
+
 
 .footer svg.contact{
   width: 20px;
@@ -45,11 +77,51 @@ h1 {
   background-color: #162b32;
 }
 
-.footer {
-  background-image: url('https://demo.egenslab.com/html/tourxpro/demo/assets/images/banner/footer-bg.png');
+/* -- footer -- */
+ 
+
+/* navbar */
+
+.navbar {
+  background-color: #162b32;
+  font-family: "Barlow", sans-serif;
+  padding: 15px 10px;
 }
-  
-  
+
+/* .text-orange {
+  color: #ff4838;
+  width: 30px;
+  height: 30px;
+  margin: 10px 4px 0 4px;
+}
+
+.navbar .hotline a {
+  font-size: 13px;
+}
+
+.navbar .feature svg{
+  color: #ff4838;
+  width: 22px;
+  height: 22px;
+}
+
+.navbar .feature .user svg {
+  margin: 10px 20px 0 120px;
+}
+
+.navbar .feature .category svg {
+  margin: 10px 80px 0 20px;
+}
+
+.navbar .nav-item .nav-link {
+  color: white;
+}
+
+.navbar .nav-item .nav-link:hover {
+  color: #ff4838;
+} */
+
+/* -- navbar -- */
   
   
   /* Start Destination */
@@ -62,6 +134,10 @@ h1 {
     height: 320px;
   }
   
+  .dirc_destination {
+    padding: 0;
+  }
+
   .content {
     padding: 120px 0;
   }

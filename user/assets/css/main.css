@@ -1,5 +1,5 @@
 
-  h1 {
+h1 {
     color: red;
   }
   
@@ -261,3 +261,109 @@
     color: white;
   }
   /* End Blogs */
+
+  /* Start Gallery */
+
+  .tour-gallery{
+    height: 900px;
+  }
+  .tour-gallery-img {
+      overflow: hidden;
+  }
+  .gallery-img-slider{
+    display: flex;
+  }
+  .gallery-distance{
+    margin: 36px 0 36px 0;
+  }
+  .gallery-img-item img{
+    width: 100%;
+  }
+  .gallery-img-wrapper-couple,
+  .gallery-img-wrapper {
+    margin: 10px; 
+    position: relative;
+    overflow: hidden; 
+  } 
+  .gallery-img-couple1:hover .gallery-overlay,
+  .gallery-img-couple2:hover .gallery-overlay,
+  .gallery-img-wrapper:hover .gallery-overlay{
+    opacity: 1;
+  }
+
+  .gallery-img-wrapper:hover .gallery-overlay i{
+    transform: scale(1.5);
+  }
+  .gallery-img-couple{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 455px;
+  }
+  .gallery-img-couple1,
+  .gallery-img-couple2{
+    position: relative;
+  }
+
+  .gallery-img-couple1 img,
+  .gallery-img-couple2 img{
+    height: 210px;
+    width: 100%;
+  }
+  .tour-gallery-heading{
+    margin-left: -12px;
+    margin: 30px 0 50px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .tour-gallery-heading p{
+    font-weight: 700;
+    font-size: 30px;
+    color: #2d373c;
+  }
+
+  .gallery-icon-navigate{
+    display: flex;
+  }
+
+  .gallery-icon-navigate i{
+    padding: 10px;
+    border: 1px solid #FF4838;
+    border-radius: 50%;
+    color: #FF4838;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gallery-icon-right{
+    margin-left: 50px;
+  }
+  .gallery-icon-navigate i:hover{
+    background-color: #FF4838;
+    color: #fff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .gallery-overlay{
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(206,20,70,.4);
+    position: absolute;
+    top:0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    opacity: 0;
+    transition: all .25s
+  }
+  .gallery-overlay i{
+    color: #fff;
+    font-size: 40px;
+    transition: transform 0.2s ease-in-out;
+  }
+

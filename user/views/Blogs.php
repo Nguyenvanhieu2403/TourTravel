@@ -181,7 +181,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 ">
+            <div class="col-md-4">
                 <div class="blog-item">
                     <div class="blog-item-img">
                         <img src="../assets/img/blogs/blog-md-7.png" alt="" class="hover-zoom">

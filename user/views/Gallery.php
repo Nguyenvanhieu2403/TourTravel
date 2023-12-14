@@ -124,7 +124,13 @@
         
         <div class="tour-guide-gallery">
             <div class="tour-gallery-heading">
-                <p>Tour Gallery</p>
+                <p>Tour Guide Gallery</p>
+                <!-- Navigate -->
+                <div class="slick-prev gallery-guide-icon-navigate">
+                    <i class="fas fa-chevron-left gallery-icon-left"></i>
+                    <i class="fas fa-chevron-right gallery-icon-right"></i>
+                </div>
+                <!--  -->
             </div>
             <div class="row gallery-guide-img-slider">
                 <div class="col-md-4">
@@ -264,10 +270,10 @@
                 arrows: false,
                 rows: 1,
             });
-            $('.gallery-icon-navigate .gallery-icon-left').on('click', function(){
+            $('.gallery-guide-icon-navigate .gallery-icon-left').on('click', function(){
                 $('.gallery-guide-img-slider').slick('slickPrev');
             });
-            $('.gallery-icon-navigate .gallery-icon-right').on('click', function(){
+            $('.gallery-guide-icon-navigate .gallery-icon-right').on('click', function(){
                 console.log('Icon right clicked');
                 $('.gallery-guide-img-slider').slick('slickNext');
             });

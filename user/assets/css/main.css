@@ -267,6 +267,9 @@ h1 {
   .tour-gallery{
     height: 900px;
   }
+  .tour-guide-gallery{
+    margin: 60px 0 110px 0;
+  }
   .tour-gallery-img {
       overflow: hidden;
   }
@@ -323,11 +326,11 @@ h1 {
     font-size: 30px;
     color: #2d373c;
   }
-
+  .gallery-guide-icon-navigate,
   .gallery-icon-navigate{
     display: flex;
   }
-
+  .gallery-guide-icon-navigate i,
   .gallery-icon-navigate i{
     padding: 10px;
     border: 1px solid #FF4838;
@@ -342,6 +345,7 @@ h1 {
   .gallery-icon-right{
     margin-left: 50px;
   }
+  .gallery-guide-icon-navigate i:hover,
   .gallery-icon-navigate i:hover{
     background-color: #FF4838;
     color: #fff;

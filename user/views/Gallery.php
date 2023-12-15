@@ -16,7 +16,6 @@
 </div>
 
     <div class="container">
-
         <div class="tour-gallery">
             <div class="tour-gallery-heading">
                 <p>Tour Gallery</p>

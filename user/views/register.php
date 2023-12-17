@@ -17,6 +17,7 @@
     $fullName = "";
     $phoneNumber = "";
     $email = "";
+    $dob = "";
     $passwordAdmin = "";
     $status = 0;
 
@@ -25,7 +26,7 @@
     $errPhoneNumber = "";
     $errEmail = "";
     $errPasswordAdmin = "";
-
+    $errDob = "";
     // Validate 
     $isValid = true;
     $nameRegex = '/^[^\W\d_]+$/u';
@@ -78,6 +79,13 @@
                 $isValid = false;
             }
         }
+        if(empty($_POST["dob"])){
+            $errDob = 'Date of birth is required';
+            $isValid = false;
+        }
+        else{
+            $dob = $_POST["dob"];
+        }
         if(empty($_POST["password"])){
             $errPasswordAdmin = 'Password is required';
             $isValid = false;
@@ -92,9 +100,10 @@
 
         // Create query
         if($isValid){
-            $newAccount = $connect->prepare("INSERT INTO `admin` (`FullName`, `PhoneNumber`, `Email`, `Password`, `Status`)
-            VALUES (?,?,?,?,?);");
-            $newAccount->bind_param("sissi", $fullName, $phoneNumber, $email,$passwordAdmin,$status);
+            $dobFormatted = date('Y-m-d', strtotime($dob));
+            $newAccount = $connect->prepare("INSERT INTO `employees` (`FullName`, `PhoneNumber`, `Email`, `Password`,`DOB`, `Status`)
+            VALUES (?,?,?,?,?,?);");
+            $newAccount->bind_param("sisssi", $fullName, $phoneNumber, $email,$passwordAdmin,$dob,$status);
             $newAccount->execute();
             $newAccount->close();
             $connect->close();
@@ -174,15 +183,22 @@
                 
                 <div class="form-group group-phoneNumber">
                     <input type="text" name="phoneNumber" id="phoneNumber" placeholder="Phone number"><br>
+                    <i class="fa-solid fa-phone"></i>
                     <span style="color:yellow"><?php echo $errPhoneNumber ?></span><br>
                 </div>
                 
                 <div class="form-group group-email">
                     <input type="text" name="email" id="email" placeholder="Email"><br>
+                    <i class="fa-regular fa-envelope"></i>
                     <span style="color:yellow"><?php echo $errEmail ?></span><br>
+                </div>
+                <div class="form-group group-dob">
+                    <input type="date" name="dob" id="dob" placeholder="Date of birth"><br>
+                    <span style="color:yellow"><?php echo $errDob ?></span><br>
                 </div>
                 <div class="form-group group-password">
                     <input type="password" name="password" id="password" placeholder="Password"><br>
+                    <i class="fa-solid fa-lock"></i>
                     <span style="color:yellow"><?php echo $errPasswordAdmin ?></span><br>
                 </div>
                 <div class="form-group group-submit">

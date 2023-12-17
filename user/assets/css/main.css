@@ -510,7 +510,7 @@ h1 {
 }
 /* End Contact */
 
-/* Login and Register */
+/* Start Login and Register */
 .register {
   margin: 0; 
   padding: 0;
@@ -541,7 +541,8 @@ h1 {
   margin: 10px 0 50px 0;
 }
 .form-group{
- margin: 25px 10px;
+ margin: 15px 10px;
+ position: relative;
 }
 
 .form-group input{
@@ -564,7 +565,7 @@ h1 {
   margin-bottom: 20px;
 }
 .group-name input:nth-child(1) {
-  margin-right: 4%; /* Không cần khoảng cách cho trường input cuối cùng */
+  margin-right: 4%; 
 }
 .group-submit:hover{
   opacity: 0.8;
@@ -624,8 +625,30 @@ h1 {
 .group-checkbox{
   margin: 30px 10px;
 }
+.group-dob input{
+  color: #fff;
+}
 .register-navigate-login a:hover{
   color: #CA324B;
   transition: color 0.3s ease;
 }
+.group-nameAccount input,
+.group-password input{
+  margin: 10px 0;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+.form-group i{
+  color: #fff;
+  position: absolute;
+  top: 10px;
+  right: 0;
+  font-size: 18px;
+}
+.group-nameAccount i,
+.group-password i{
+  top: 20px;
+}
 
+/* End Login and Register */

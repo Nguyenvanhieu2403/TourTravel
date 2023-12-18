@@ -19,12 +19,21 @@
     </div>
 </div> 
 
+<?php 
+
+    $queryPackage = "select t.Title as Title, t.Price as Price, img.Image as Image from tour t join images img on t.Id = img.TourId where img.Status = 3";
+	$sql_Package = mysqli_query($con,$queryPackage); 
+    $count = 0;
+?>
+
 <div class="container">
     <div class="row tour__detail--container">
         <div class="col-md-8">
             <div class="row">
-                <div class="col-12">
-                    <img src="../../../user/assets/img/tour__detail/pd-thumb.png" alt="">
+                <div class="col-md-12">
+                    <div class="row">
+                    <img class="col-12" src="../../../user/assets/img/tour__detail/pd-thumb.png" alt="">
+                    </div>
                 </div>
             </div>
             <div class="row align-items-lg-center tour-detail__title mt-4">
@@ -56,9 +65,9 @@
                     </svg>
                 </div>
             </div>
-            <div class="row">
+            <div class="row tour-detail__row--navbar">
                 <div class="col-md-12 m-4">
-                    <ul class="nav nav-pills mb-12 tour__detail--navbar" id="pills-tab" role="tablist">
+                    <ul class="nav nav-pills mb-12 tour__detail--navbar__content" id="pills-tab" role="tablist">
                         <li class="tour--detail__nav-item " role="presentation">
                             <button class="nav-link active" id="pills-Information-tab" data-bs-toggle="pill" data-bs-target="#pills-Information" type="button" role="tab" aria-controls="pills-Information" aria-selected="true">
                                 <span>
@@ -124,12 +133,16 @@
                                     </p>
                                 </div>
                             </div>
-                            <div class="row position-relative">
+                            <div class="row ">
                                 <div class="tour__detail--img col-md-6">
-                                    <img src="../../../user/assets/img/tour__detail/feat-img1.png" alt="">
+                                    <div class="row">
+                                        <img class="col-md-12" src="../../../user/assets/img/tour__detail/feat-img1.png" alt="">
+                                    </div>
                                 </div>
                                 <div class="tour__detail--img col-md-6">
-                                    <img src="../../../user/assets/img/tour__detail/feat-img2.png" alt="">
+                                    <div class="row">
+                                        <img class="col-md-12" src="../../../user/assets/img/tour__detail/feat-img2.png" alt="">
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -144,8 +157,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <table class="desti--detail__overview-table col-12">
+                            <div class="row tour__detail--table">
+                                <table class="desti--detail__overview-table col-md-12">
                                     <tbody>
                                         <tr>
                                             <th>Destination</th>
@@ -169,9 +182,11 @@
                                         </tr>
                                         <tr>
                                             <td colspan="2">
-                                                <div class="tour__detail--transport col-md-12">
-                                                    <img src="../../../user/assets/img/tour__detail/bus.svg" alt="">
-                                                    <span>Travel With Bus</span>
+                                                <div class="row">
+                                                    <div class="tour__detail--transport col-md-12">
+                                                        <img src="../../../user/assets/img/tour__detail/bus.svg" alt="">
+                                                        <span>Travel With Bus</span>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -286,10 +301,10 @@
                                     </div>
                                     <div class="desti__detail--widget-body">
                                         <div class="row tour__detail--comment__inputs">
-                                            <div class="col-6">
+                                            <div class="col-md-6">
                                                 <input type="text" placeholder="Your Full Name">
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-md-6">
                                                 <input type="text" placeholder="Your Email">
                                             </div>
                                         </div>
@@ -308,136 +323,492 @@
                                             <div class="rating"> <input type="radio" name="rating" value="5" id="5"><label for="5">☆</label> <input type="radio" name="rating" value="4" id="4"><label for="4">☆</label> <input type="radio" name="rating" value="3" id="3"><label for="3">☆</label> <input type="radio" name="rating" value="2" id="2"><label for="2">☆</label> <input type="radio" name="rating" value="1" id="1"><label for="1">☆</label>
                                             </div>
                                         </div>
+                                        <div class="row submite-btn m-2">
+                                            <button class="col-md-3">Send Message</button>
+                                        </div>
                                     </div>
                                 </aside>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="pills-TravelPlan" role="tabpanel" aria-labelledby="pills-TravelPlan-tab">Hieu</div>
-                        <div class="tab-pane fade" id="pills-TourGallary" role="tabpanel" aria-labelledby="pills-TourGallary-tab">Dz</div>
-                        <div class="tab-pane fade" id="pills-Location" role="tabpanel" aria-labelledby="pills-Location-tab">Dz</div>
+                        <div class="tab-pane fade" id="pills-TravelPlan" role="tabpanel" aria-labelledby="pills-TravelPlan-tab">
+                            <div class="row">
+                                <div class="tour__detail--information mt-5">
+                                    <h2>Details</h2>
+                                    <p class="tour__detail--infor__description">
+                                        Pellentesque accumsan magna in augue sagittis, non fringilla eros molestie. 
+                                        Sed feugiat mi nec ex vehicula, nec vestibulum orci semper. 
+                                        Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. 
+                                        Donec tristique commodo fringilla. Duis aliquet varius mauris eget rutrum. 
+                                        Nullam sit amet justo consequat, bibendum orci in, convallis enim. 
+                                        Proin convallis neque viverra finibus cursus. Mauris lacinia lacinia erat in finibus.
+                                    </p>
+                                    <div class="row">
+                                        <div class="accordion plans-accordion" id="planAccordion">
+                                            <div class="accordion-item plans-accordion-single">
+                                                <div class="accordion-header" id="planHeadingOne">
+                                                    <div class="accordion-button" data-bs-toggle="collapse" data-bs-target="#planCollapse1" aria-expanded="true" role="navigation">
+                                                        <div class="paln-index-circle me-3">
+                                                            <h4>01</h4>
+                                                        </div>
+                                                        <div class="plan-title">
+                                                            <h5>DAY 1 : Departure And Small Tour</h5>
+                                                            <h6>10.00 AM to 10.00 PM</h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="planCollapse1" class="accordion-collapse collapse show" aria-labelledby="planHeadingOne" data-bs-parent="#planAccordion" style="">
+                                                    <div class="accordion-body plan-info">
+                                                        <p>Pellentesque accumsan magna in augue sagittis, non fringilla eros molestie. Sed feugiat mi nec ex vehicula, nec vestibulum orci semper. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec tristique commodo fringilla.</p>
+                                                        <ul>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                 Specilaized Bilingual Guide
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Private Transport
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Entrance Fees
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Box Lunch,Water,Dinner and Snacks
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="accordion-item plans-accordion-single">
+                                                <div class="accordion-header" id="planHeadingTwo">
+                                                    <div class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#planCollapse2" aria-expanded="true" role="navigation">
+                                                        <div class="paln-index-circle">
+                                                            <h4>02</h4>
+                                                        </div>
+                                                        <div class="plan-title">
+                                                            <h5>DAY 1 : Departure And Small Tour</h5>
+                                                            <h6>10.00 AM to 10.00 PM</h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="planCollapse2" class="accordion-collapse collapse" aria-labelledby="planHeadingTwo" data-bs-parent="#planAccordion">
+                                                    <div class="accordion-body plan-info">
+                                                        <p>Pellentesque accumsan magna in augue sagittis, non fringilla eros molestie. Sed feugiat mi nec ex vehicula, nec vestibulum orci semper. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec tristique commodo fringilla.</p>
+                                                        <ul>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                 Specilaized Bilingual Guide
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Private Transport
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Entrance Fees
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Box Lunch,Water,Dinner and Snacks
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="accordion-item plans-accordion-single">
+                                                <div class="accordion-header" id="planHeadingThree">
+                                                    <div class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#planCollapse3" aria-expanded="true" aria-controls="planCollapse1" role="navigation">
+                                                        <div class="paln-index-circle">
+                                                            <h4>03</h4>
+                                                        </div>
+                                                        <div class="plan-title">
+                                                            <h5>DAY 1 : Departure And Small Tour</h5>
+                                                            <h6>10.00 AM to 10.00 PM</h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="planCollapse3" class="accordion-collapse collapse" aria-labelledby="planHeadingThree" data-bs-parent="#planAccordion">
+                                                    <div class="accordion-body plan-info">
+                                                        <p>Pellentesque accumsan magna in augue sagittis, non fringilla eros molestie. Sed feugiat mi nec ex vehicula, nec vestibulum orci semper. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec tristique commodo fringilla.</p>
+                                                        <ul>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                 Specilaized Bilingual Guide
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Private Transport
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Entrance Fees
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Box Lunch,Water,Dinner and Snacks
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="accordion-item plans-accordion-single">
+                                                <div class="accordion-header" id="planHeadingFour">
+                                                    <div class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#planCollapse4" aria-expanded="true" role="navigation">
+                                                        <div class="paln-index-circle">
+                                                            <h4>04</h4>
+                                                        </div>
+                                                        <div class="plan-title">
+                                                            <h5>DAY 1 : Departure And Small Tour</h5>
+                                                            <h6>10.00 AM to 10.00 PM</h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="planCollapse4" class="accordion-collapse collapse" aria-labelledby="planHeadingFour" data-bs-parent="#planAccordion">
+                                                    <div class="accordion-body plan-info">
+                                                        <p>Pellentesque accumsan magna in augue sagittis, non fringilla eros molestie. Sed feugiat mi nec ex vehicula, nec vestibulum orci semper. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec tristique commodo fringilla.</p>
+                                                        <ul>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                 Specilaized Bilingual Guide
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Private Transport
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Entrance Fees
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Box Lunch,Water,Dinner and Snacks
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="accordion-item plans-accordion-single">
+                                                <div class="accordion-header" id="planHeadingFive">
+                                                    <div class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#planCollapse5" aria-expanded="true" role="navigation">
+                                                        <div class="paln-index-circle">
+                                                            <h4>04</h4>
+                                                        </div>
+                                                        <div class="plan-title">
+                                                            <h5>DAY 1 : Departure And Small Tour</h5>
+                                                            <h6>10.00 AM to 10.00 PM</h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="planCollapse5" class="accordion-collapse collapse" aria-labelledby="planHeadingFive" data-bs-parent="#planAccordion">
+                                                    <div class="accordion-body plan-info">
+                                                        <p>Pellentesque accumsan magna in augue sagittis, non fringilla eros molestie. Sed feugiat mi nec ex vehicula, nec vestibulum orci semper. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec tristique commodo fringilla.</p>
+                                                        <ul>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                 Specilaized Bilingual Guide
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Private Transport
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Entrance Fees
+                                                            </li>
+                                                            <li>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022"/>
+                                                                </svg>
+                                                                Box Lunch,Water,Dinner and Snacks
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-TourGallary" role="tabpanel" aria-labelledby="pills-TourGallary-tab">
+                            <div class="row mt-5 mb-1">
+
+                                <div class="col-md-6 mb-4">
+                                    <div class="tour__detail--gallary__img position-relative">
+                                        <div class="tour__detail--gallary col-12">
+                                            <img src="../../../user/assets/img/tour__detail/pgl-1.png" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="tour__detail--gallary__img">
+                                        <div class="tour__detail--gallary col-12">
+                                            <img src="../../../user/assets/img/tour__detail/pgl-2.png" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-4">
+                                    <div class="tour__detail--gallary__img">
+                                        <div class="tour__detail--gallary col-12">
+                                            <img src="../../../user/assets/img/tour__detail/pgx-1.png" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <div class="tour__detail--gallary__img">
+                                        <div class="tour__detail--gallary col-12">
+                                            <img src="../../../user/assets/img/tour__detail/pgl-3.png" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="tour__detail--gallary__img">
+                                        <div class="tour__detail--gallary col-12">
+                                            <img src="../../../user/assets/img/tour__detail/pgl-4.png" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-4">
+                                    <div class="tour__detail--gallary__img">
+                                        <div class="tour__detail--gallary col-12">
+                                            <img src="../../../user/assets/img/tour__detail/pgx-2.png" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <div class="tour__detail--gallary__img">
+                                        <div class="tour__detail--gallary col-12">
+                                            <img src="../../../user/assets/img/tour__detail/pgl-5.png" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="tour__detail--gallary__img">
+                                        <div class="tour__detail--gallary col-12">
+                                            <img src="../../../user/assets/img/tour__detail/pgl-6.png" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-4">
+                                    <div class="tour__detail--gallary__img">
+                                        <div class="tour__detail--gallary col-12">
+                                            <img src="../../../user/assets/img/tour__detail/pgx-3.png" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-Location" role="tabpanel" aria-labelledby="pills-Location-tab">
+                            <div class="row mt-5 mb-5">
+                                <iframe 
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.816814555946!2d105.73938337479642!3d21.
+                                    040014487392796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135096b31fa7abb%3A0xff645782804911af!
+                                    2zVHLGsOG7nW5nIMSR4bqhaSBo4buNYyBDw7RuZyBuZ2jhu4cgxJDDtG5nIMOB!5e0!3m2!1svi!2s!4v1702392857182!5m2!1svi!2s" 
+                                    width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                                </iframe>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-4 mt-5 mt-lg-0">
-                <div class="desti__detail--sidebar">
-                    <aside class="desti__detail--package-widget desti__detail--widget-search mb-4">
-                        <div class="desti__detail--widget-title">
-                            <h4>Search Here</h4>
-                        </div>
-                        <div class="desti__detail--widget-body">
-                            <form action="#" method="post" id="desti__detail--blog-sidebar-search">
-                                <div class="desti__detail--search-input-group">
-                                    <input type="search" placeholder="Your Destination">
-                                    <button type="submit">SEARCH</button>
-                                </div>
-                            </form>
-                        </div>
-                    </aside>
-                    <aside class="desti__detail--package-widget widget-tour-categoris mt-30 mb-4">
-                        <div class="desti__detail--widget-title">
-                            <h4>Category</h4>
-                        </div>
-                        <div class="desti__detail--widget-body">
-                            <ul>
-                                <?php
-                                    while($row_tourType = mysqli_fetch_array($sql_TourType)){ 
-                                ?>
-                                    <li class="desti__detail--category-check pt-2 pb-2">
-                                        <label class="desti__detail--form-check-label" for="cate">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
-                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
-                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
-                                            </svg>
-                                            <?php echo $row_tourType['TourType'] ?>
-                                        </label>
-                                        <input class="form-check-input" type="checkbox" id="cate">
-                                    </li>
-                                <?php
-                                    }
-                                ?>
-                            </ul>
-                        </div>
-                    </aside>
-
-                    <aside class="desti__detail--package-widget widget-tour-destination mt-30 mb-4">
-                        <div class="desti__detail--widget-title">
-                            <h4>Chooes Your Duration</h4>
-                        </div>
-                        <div class="desti__detail--widget-body">
-                            <ul>
-                                <li class="desti__detail--category-check pt-2 pb-2 tour__duration ">
-                                    <input class="form-check-input" type="checkbox" id="cate">
-                                    <label class="desti__detail--form-check-label m-1" for="cate">
-                                        1 - 3 Days
-                                    </label>
-                                    
-                                </li>
-                                
-                                <li class="desti__detail--category-check pt-2 pb-2 tour__duration">
-                                    <input class="form-check-input" type="checkbox" id="cate">
-                                    <label class="desti__detail--form-check-label m-1" for="cate">
-                                        3 - 5 Days
-                                    </label>
-                                    
-                                </li>
-
-                                <li class="desti__detail--category-check pt-2 pb-2 tour__duration">
-                                    <input class="form-check-input" type="checkbox" id="cate">
-                                    <label class="desti__detail--form-check-label m-1" for="cate">
-                                        5 - 7 Days
-                                    </label>
-                                    
-                                </li>
-
-                                <li class="desti__detail--category-check pt-2 pb-2 tour__duration">
-                                    <input class="form-check-input" type="checkbox" id="cate">
-                                    <label class="desti__detail--form-check-label m-1" for="cate">
-                                        7 - 9 Days
-                                    </label>
-                                    
-                                </li>
-
-                                <li class="desti__detail--category-check pt-2 pb-2 tour__duration">
-                                    <input class="form-check-input" type="checkbox" id="cate">
-                                    <label class="desti__detail--form-check-label m-1" for="cate">
-                                        9 - 11 Days
-                                    </label>
-                                    
-                                </li>
-                            </ul>
-                        </div>
-                    </aside>
-
-                    <aside class="desti__detail--package-widget widget-tour-destination mt-30 mb-4">
-                        <div class="desti__detail--widget-title">
-                            <h4>New Package</h4>
-                        </div>
-                        <div class="desti__detail--widget-body">
-                            <?php
-                                while($row_package = mysqli_fetch_array($sql_Package) and $count < 5){ 
-                            ?>
-                                <div class="row mt-2 mb-2">
-                                    <div class="col-md-3 package__img">
-                                        <img src="<?php echo $row_package['Image'] ?>" alt="">
-                                    </div>
-                                    <div class="col-md-9">
-                                        <span class="package__title"><?php echo $row_package['Title'] ?></span>
-                                        <h6 class="fs-6 fw-normal">From</h6>
-                                        <h6 class="newPackage__price">
-                                            <span class="fs-6 fw-bold">$<?php echo $row_package['Price'] ?></span>
-                                            <span class="tour-description--price__per">Per Person</span>
-                                        </h6>
-                                    </div>
-                                </div>
-                            <?php
-                                $count++;
-                                }
-                            ?>
-                        </div>
-                    </aside>
+            <aside class="tour__detail-widget-style-2 widget-form mt-30">
+                <div class="tour__detail--navbar widget-title text-center d-flex justify-content-between">
+                    <h4>Book This Tour</h4>
+                    <h3 class="widget-lavel">$75 <span>Per Person</span></h3>
                 </div>
-            </div>
+                <div class="widget-body tour__detail--navbar__form">
+                    <form action="#" method="post" id="booking-form">
+                        <div class="booking-form-wrapper">
+                            <div class="custom-input-group row">
+                                <input type="text" placeholder="Your Full Name" id="name">
+                            </div>
+                            <div class="custom-input-group row">
+                                <input type="email" placeholder="Your Email" id="email">
+                            </div>
+                            <div class="custom-input-group row">
+                            <input type="tel" placeholder="Phone" id="phone">
+                            </div>
+                            <div class="custom-input-group position-relative row">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                                <select id="ticket_type">
+                                    <option selected="">Tickets Type</option>
+                                    <option value="1">Tickets Type 1</option>
+                                    <option value="2">Tickets Type 2</option>
+                                    <option value="3">Tickets Type 3</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                            <div class="col-sm-6">
+                                <!-- <div class="custom-input-group">
+                                    <i class="bi bi-chevron-down"></i>
+                                    <select id="truist-adult">
+                                        <option selected="">Adult</option>
+                                        <option value="1"> 1</option>
+                                        <option value="2"> 2</option>
+                                        <option value="3"> 3</option>
+                                    </select>
+                                </div> -->
+                                <div class="custom-input-group position-relative row">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                    </svg>
+                                    <select id="ticket_type">
+                                        <option selected="">Adult</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </select>
+                                </div>  
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="custom-input-group position-relative row">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                    </svg>
+                                    <select id="ticket_type">
+                                        <option selected="">Child</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </select>
+                                </div>  
+                            </div>
+                            </div>
+                            <div class="custom-input-group  position-relative row">
+                                <!-- <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar3" viewBox="0 0 16 16">
+                                    <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                                    <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                                </svg> -->
+                                <input placeholder="Select your date" type="date" name="checkIn" id="datepicker2" value="" class="calendar hasDatepicker">
+                            </div>
+                            <div class="custom-input-group pt-4">
+                            <textarea cols="45" rows="6" placeholder="Your message"></textarea>
+                            </div>
+                            <div class="custom-input-group row">
+                                <div class="submite-btn col-12 row  ">
+                                    <button type="submit">Book Now</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </aside>
+
+            <aside class="desti__detail--package-widget widget-tour-destination mt-4 mb-4">
+                <div class="desti__detail--widget-title  tour__detail--widget-title">
+                    <h4 class="text-light">New Package</h4>
+                </div>
+                <div class="desti__detail--widget-body">
+                    <?php
+                        while($row_package = mysqli_fetch_array($sql_Package) and $count < 5){ 
+                    ?>
+                        <div class="row mt-2 mb-2">
+                            <div class="col-md-3 package__img">
+                                <img src="<?php echo $row_package['Image'] ?>" alt="">
+                            </div>
+                            <div class="col-md-9">
+                                <span class="package__title"><?php echo $row_package['Title'] ?></span>
+                                <h6 class="fs-6 fw-normal">From</h6>
+                                <h6 class="newPackage__price">
+                                    <span class="fs-6 fw-bold">$<?php echo $row_package['Price'] ?></span>
+                                    <span class="tour-description--price__per">Per Person</span>
+                                </h6>
+                            </div>
+                        </div>
+                    <?php
+                        $count++;
+                        }
+                    ?>
+                </div>
+            </aside>
+
+            <aside class="desti__detail--package-widget widget-tour-destination mt-30 mb-4">
+                <div class="desti__detail--widget-title  tour__detail--widget-title">
+                    <h4 class="text-light">Package Tag</h4>
+                </div>
+                <div class="desti__detail--widget-body">
+                    <div class="row">
+                        <div class="tour__detail--packages__tag col-3 m-1">
+                            <span>Adventure</span>
+                        </div>
+                        <div class="tour__detail--packages__tag col-3 m-1">
+                            <span>Trip</span>
+                        </div>
+                        <div class="tour__detail--packages__tag col-3 m-1">
+                            <span>Guided</span>
+                        </div>
+                        <div class="tour__detail--packages__tag col-3 m-1">
+                            <span>Historical</span>
+                        </div>
+                        <div class="tour__detail--packages__tag col-3 m-1">
+                            <span>Road Trips</span>
+                        </div>
+                        <div class="tour__detail--packages__tag col-3 m-1">
+                            <span>Tourist</span>
+                        </div>
+                        <div class="tour__detail--packages__tag col-3 m-1">
+                            <span>Tourist</span>
+                        </div>
+                        <div class="tour__detail--packages__tag col-3 m-1">
+                            <span>Tourist</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <aside class="desti__detail--package-widget widget-tour-destination mt-30 mb-4">
+                <div class="row">
+                    <div class="col-md-12">
+                        <img src="../../../user/assets/img/banner/sidebar-banner.png" alt="">
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
 </div>

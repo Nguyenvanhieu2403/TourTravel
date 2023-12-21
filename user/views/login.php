@@ -24,8 +24,8 @@
             $passwordAdmin = $_POST["passwordAdmin"];
 
             $rememberMe = isset($_POST["remember_me"]) && $_POST["remember_me"] === 'on';
-            $checkAccount = $connect->prepare("SELECT * FROM `employees` WHERE `Email` = ? AND `Password` = ?");
-            $checkAccount->bind_param("ss", $nameAccount, $passwordAdmin);
+            $checkAccount = $connect->prepare("SELECT * FROM `employees` WHERE `Email` = ?");
+            $checkAccount->bind_param("s", $nameAccount);
             $checkAccount->execute();
 
             // Get result from query 
@@ -38,34 +38,39 @@
             if ($result->num_rows > 0) {
                 // Convert result to array 
                 $row = $result->fetch_assoc();
+                $passwordEncode = $row['Password'];
                 $status = $row['Status'];
-                if($status == 0){
-                    header("Location: test_login_register.html"); // For employee
-                }
-                else if($status == 1){
-                    echo "Tài khoản chưa được phê duyệt";
-                }
-                else if($status == 2){
-                    if($rememberMe)
-                    {
-                        $hour = time() + 3600 * 24 * 30;
-                        setcookie('username', $nameAccount, $hour);
-                        setcookie('password', $passwordAdmin, $hour);
-                    }
-                    else {
-                        // Hủy cookie
-                        setcookie('username', '', time() - 3600); 
-                        setcookie('password', '', time() - 3600);
-                    }
-                    echo "Đăng nhập thành công";
-                    header("Location: test_login_register.html"); // Change to home page (admin)
+                // Decrypt password
+                $verify = password_verify($passwordAdmin,$passwordEncode);
+                if(!$verify){
+                    $errAccount = "Name account or password is incorrect !";
                 }
                 else{
-                    echo "Đăng nhập với quyền supper admin thành công";
-                    // header("Location: test.html"); // Change to home page
+                    if($rememberMe){
+                        $hour = time() + 3600 * 24 * 30;
+                        setcookie('username', $nameAccount, $hour);
+                        // setcookie('password', $passwordAdmin, $hour);
+                    }
+                    else {
+                        setcookie('username', '', time() - 3600); 
+                        // setcookie('password', '', time() - 3600);
+                    }
+                    if($status == 0){
+                        header("Location: test_login_register.html"); // For employee
+                    }
+                    else if($status == 1){
+                        header("Location: test_login_register.html"); // Wait to approve
+                    }
+                    else if($status == 2){
+                        echo "Đăng nhập thành công";
+                        header("Location: test_login_register.html"); // Change to home page (admin)
+                    }
+                    else{
+                        header("Location: test_login_register.html");
+                        echo "Đăng nhập với quyền supper admin thành công";
+                    }
+                    $checkAccount->close();
                 }
-                $checkAccount->close();
-
             } else {
                 $errAccount = "Name account or password is incorrect";
                 $checkAccount->close();
@@ -74,13 +79,6 @@
         
     }
 ?>
-    <!-- <form action="" method="POST">
-        <input type="text" name="nameAccount" id="nameAccount" placeholder="Email" value="<?php echo $rememberedUsername; ?>"><br>
-        <input type="password" name="passwordAdmin" id="passwordAdmin" placeholder="Password" value="<?php echo $rememberedPassword; ?>"><br>
-        <input type="checkbox" name="remember_me" <?php echo $rememberedUsername !== '' ? 'checked' : ''; ?>/> Remember me <br>
-        <input type="submit">
-    </form> -->
-
     <div class="register">
         <div class="register-container">
             <div class="row m-0 container-fluid p-0">
@@ -120,7 +118,7 @@
                             <i class="fa-solid fa-user"></i>
                         </div>
                         <div class="form-group group-password-login">
-                            <input type="password" name="passwordAdmin" id="passwordAdmin" placeholder="Password" value="<?php echo $rememberedPassword; ?>"><br>
+                            <input type="password" name="passwordAdmin" id="passwordAdmin" placeholder="Password"><br>
                             <i class="fa-solid fa-eye-slash close-eye-icon"></i>
                             <i class="fa-solid fa-eye open-eye-icon"></i>
                             <span style="color:yellow"><?php echo $errAccount ?></span><br>

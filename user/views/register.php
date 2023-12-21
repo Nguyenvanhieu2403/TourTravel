@@ -125,9 +125,11 @@
         // Create query
         if($isValid){
             $dobFormatted = date('Y-m-d', strtotime($dob));
+            // Encrypt password 
+            $passwordEncode = password_hash($passwordAdmin,PASSWORD_DEFAULT);
             $newAccount = $connect->prepare("INSERT INTO `employees` (`FullName`, `PhoneNumber`, `Email`, `Password`,`DOB`, `Status`)
             VALUES (?,?,?,?,?,?);");
-            $newAccount->bind_param("sisssi", $fullName, $phoneNumber, $email,$passwordAdmin,$dob,$status);
+            $newAccount->bind_param("sisssi", $fullName, $phoneNumber, $email,$passwordEncode,$dob,$status);
             $newAccount->execute();
             $newAccount->close();
             $connect->close();

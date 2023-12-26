@@ -1,7 +1,7 @@
 <?php require('includes/header.html'); ?>
 <?php
 	include_once('../assets/database/ConnectToSql.php');
- ?>
+?>
 <div class="header-destination header-destination__detail ">
     <div class="content">
         <h1 class="text-center fw-bold text-light">Destination Details</h1>
@@ -19,11 +19,27 @@
 </div>  
 
 <?php
-    $query = "select d.City as City, dt.DepartureTime as DepartureTime, dt.Description1 as Description1, dt.Description2 as Description2, dt.ReturnTime as ReturnTime, dt.TiTle as Title, img.Image as Image from destination d join destinationdetail dt on d.Id = dt.DestinationId join images img on dt.Id = img.DestinationDetailId where img.Status = 1";
-	$sql_destinationDetail = mysqli_query($con,$query); 
+    if (isset($_GET['id'])) {
+        // Lấy giá trị id từ tham số 'id'
+        $destinationId = $_GET['id'];
 
-    $queryImg = "select img.Image as Image from  destinationdetail dt join images img on dt.Id = img.DestinationDetailId where img.Status = 2";
-	$sql_destinationDetailImg = mysqli_query($con,$queryImg); 
+        $query = "select d.City as City, dt.DepartureTime as DepartureTime, dt.Description1 as Description1, dt.Description2 as Description2, dt.ReturnTime as ReturnTime, dt.TiTle as Title, img.Image as Image from destination d join destinationdetail dt on d.Id = dt.DestinationId join images img on dt.Id = img.DestinationDetailId where img.Status = 1 and d.Id = $destinationId";
+        $sql_destinationDetail = mysqli_query($con,$query); 
+
+        $queryImg = "select img.Image as Image from  destinationdetail dt join images img on dt.Id = img.DestinationDetailId where img.Status = 2";
+        $sql_destinationDetailImg = mysqli_query($con,$queryImg);
+
+        $queryTourType = "select distinct TourType from Tour";
+        $sql_tourType = mysqli_query($con,$queryTourType);
+    } else {
+        // Trường hợp không có tham số 'id'
+        echo "Không có id được cung cấp.";
+        return;
+    }
+?>
+
+<?php
+    if(mysqli_num_rows($sql_destinationDetail) > 0) {
 
 ?>
 
@@ -98,10 +114,10 @@
                             <h4>Search Here</h4>
                         </div>
                         <div class="desti__detail--widget-body">
-                            <form action="#" method="post" id="desti__detail--blog-sidebar-search">
+                            <form action="javascript:void(0);" method="post" id="desti__detail--blog-sidebar-search">
                                 <div class="desti__detail--search-input-group">
                                     <input type="search" placeholder="Your Destination">
-                                    <button type="submit">SEAECH</button>
+                                    <button type="submit">SEARCH</button>
                                 </div>
                             </form>
                         </div>
@@ -112,60 +128,23 @@
                         </div>
                         <div class="desti__detail--widget-body">
                             <ul>
+                                <?php
+                                    while($row_tourType = mysqli_fetch_array($sql_tourType)){
+                                ?>
                                 <li class="desti__detail--category-check pt-2 pb-2">
                                     <label class="desti__detail--form-check-label" for="cate">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
                                             <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
                                         </svg>
-                                        New York City
+                                        <?php echo $row_tourType['TourType'] ?> 
                                     </label>
-                                    <input class="form-check-input" type="checkbox" id="cate">
-                                </li>
-                                
-                                <li class="desti__detail--category-check pt-2 pb-2">
-                                    <label class="desti__detail--form-check-label" for="cate">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
-                                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
-                                        </svg>
-                                        Adventure Tour
-                                    </label>
-                                    <input class="form-check-input" type="checkbox" id="cate">
+                                    <input class="form-check-input" type="checkbox" id="cate" value="<?php echo $row_tourType['TourType'] ?>">
                                 </li>
 
-                                <li class="desti__detail--category-check pt-2 pb-2">
-                                    <label class="desti__detail--form-check-label" for="cate">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
-                                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
-                                        </svg>
-                                        Couple Tour
-                                    </label>
-                                    <input class="form-check-input" type="checkbox" id="cate">
-                                </li>
-
-                                <li class="desti__detail--category-check pt-2 pb-2">
-                                    <label class="desti__detail--form-check-label" for="cate">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
-                                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
-                                        </svg>
-                                        Village Tour
-                                    </label>
-                                    <input class="form-check-input" type="checkbox" id="cate">
-                                </li>
-
-                                <li class="desti__detail--category-check pt-2 pb-2">
-                                    <label class="desti__detail--form-check-label" for="cate">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
-                                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
-                                        </svg>
-                                        Group Tour
-                                    </label>
-                                    <input class="form-check-input" type="checkbox" id="cate">
-                                </li>
+                                <?php
+                                    }
+                                ?>
                             </ul>
                         </div>
                     </aside>
@@ -212,6 +191,53 @@
     </div>
 </div>
 
+<?php
+    } else {
+        echo "<h1>Không có dữ liệu</h1>";
+    }
+?>
+<script>
+    var TourType = "";
+    $(document).ready(function() {
+        // Xử lý sự kiện khi checkbox được chọn/deselect
+        $("input[type='checkbox']").on("change", function() {
+            updateSelectedCheckboxes();
+        });
+
+        // Hàm để cập nhật danh sách các checkbox được chọn
+        function updateSelectedCheckboxes() {
+            // Lặp qua tất cả các checkbox và lấy giá trị của những cái được chọn
+            var selectedCheckboxes = [];
+            $("input[type='checkbox']:checked").each(function() {
+                selectedCheckboxes.push("'"+$(this).val()+"'");
+            });
+            TourType = selectedCheckboxes.join(", ");
+        }
+    });
+
+
+    $("#desti__detail--blog-sidebar-search").submit(function(event) {
+        // Ngăn chặn việc gửi form đi (chặn lại hành động mặc định của form)
+        event.preventDefault();
+
+        // Lấy giá trị từ thẻ input
+        var destinationValue = $("input[type='search']").val();
+
+        // Kiểm tra xem giá trị có tồn tại không
+        if (destinationValue.trim() !== "" && TourType.trim() !== "") {
+            // Chuyển hướng đến trang Destination với tham số truyền vào
+            window.location.href = "Destination.php?search=" + encodeURIComponent(destinationValue) + "&param=" + encodeURIComponent(TourType);
+        }
+        else if (destinationValue.trim() !== "") {
+            // Chuyển hướng đến trang Destination với tham số truyền vào
+            window.location.href = "Destination.php?search=" + encodeURIComponent(destinationValue);
+        }
+        else if (TourType.trim() !== "") {
+            // Chuyển hướng đến trang Destination với tham số truyền vào
+            window.location.href = "Destination.php?param=" + encodeURIComponent(TourType);
+        }
+    });
+</script>
 
 
 <?php require('includes/footer.html'); ?>

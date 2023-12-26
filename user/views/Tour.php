@@ -20,7 +20,20 @@
 </div> 
 
 <?php
-    $query = "select t.Title as Title, t.Price as Price, t.Day as Day, t.Night as Night, t.City as City, img.Image as Image from tour t join images img on t.Id = img.TourId where img.Status = 1";
+    $query = "select t.Id, t.Title as Title, t.Price as Price, t.Day as Day, t.Night as Night, t.City as City, img.Image as Image from tour t join images img on t.Id = img.TourId where img.Status = 1";
+    if(isset($_GET['search']) ) {
+        $search = $_GET['search'];
+        $query .= " and t.Title like N'%$search%'";
+    }
+    else if( isset($_GET['param'])) {
+        $param = $_GET['param'];
+        $query .= " and t.TourType in ($param)";
+    }
+    else if(isset($_GET['duration'])) {
+        $duration = $_GET['duration'];
+        $query .= " and t.Day in ($duration)";
+    }
+
 	$sql_tour = mysqli_query($con,$query); 
 
     $queryTourType = "select distinct TourType from tour";
@@ -55,7 +68,7 @@
                             </div>
                             <div class="tour__description">
                                 <div class="row tour__description--items">
-                                    <div class="tour__description--btn col-6">
+                                    <div class="tour__description--btn col-6" Id="<?php echo $row_tour['Id'] ?>">
                                         <a href="#" class="btn btn-light">
                                             Book Now
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
@@ -106,7 +119,7 @@
                             <h4>Search Here</h4>
                         </div>
                         <div class="desti__detail--widget-body">
-                            <form action="#" method="post" id="desti__detail--blog-sidebar-search">
+                            <form action="javascript:void(0);" method="post" id="desti__detail--blog-sidebar-search">
                                 <div class="desti__detail--search-input-group">
                                     <input type="search" placeholder="Your Destination">
                                     <button type="submit">SEARCH</button>
@@ -131,7 +144,7 @@
                                             </svg>
                                             <?php echo $row_tourType['TourType'] ?>
                                         </label>
-                                        <input class="form-check-input" type="checkbox" id="cate">
+                                        <input class="form-check-input" type="checkbox" id="cate" name="tourtype[]" value="<?php echo $row_tourType['TourType'] ?>">
                                     </li>
                                 <?php
                                     }
@@ -147,7 +160,7 @@
                         <div class="desti__detail--widget-body">
                             <ul>
                                 <li class="desti__detail--category-check pt-2 pb-2 tour__duration ">
-                                    <input class="form-check-input" type="checkbox" id="cate">
+                                    <input class="form-check-input" type="checkbox" id="cate" name="duration[]" value="1','2','3">
                                     <label class="desti__detail--form-check-label m-1" for="cate">
                                         1 - 3 Days
                                     </label>
@@ -155,7 +168,7 @@
                                 </li>
                                 
                                 <li class="desti__detail--category-check pt-2 pb-2 tour__duration">
-                                    <input class="form-check-input" type="checkbox" id="cate">
+                                    <input class="form-check-input" type="checkbox" id="cate" name="duration[]" value="3','4','5">
                                     <label class="desti__detail--form-check-label m-1" for="cate">
                                         3 - 5 Days
                                     </label>
@@ -163,7 +176,7 @@
                                 </li>
 
                                 <li class="desti__detail--category-check pt-2 pb-2 tour__duration">
-                                    <input class="form-check-input" type="checkbox" id="cate">
+                                    <input class="form-check-input" type="checkbox" id="cate" name="duration[]" value="5','6','7">
                                     <label class="desti__detail--form-check-label m-1" for="cate">
                                         5 - 7 Days
                                     </label>
@@ -171,7 +184,7 @@
                                 </li>
 
                                 <li class="desti__detail--category-check pt-2 pb-2 tour__duration">
-                                    <input class="form-check-input" type="checkbox" id="cate">
+                                    <input class="form-check-input" type="checkbox" id="cate" name="duration[]" value="7','8','9">
                                     <label class="desti__detail--form-check-label m-1" for="cate">
                                         7 - 9 Days
                                     </label>
@@ -179,7 +192,7 @@
                                 </li>
 
                                 <li class="desti__detail--category-check pt-2 pb-2 tour__duration">
-                                    <input class="form-check-input" type="checkbox" id="cate">
+                                    <input class="form-check-input" type="checkbox" id="cate" name="duration[]" value="9','10','11">
                                     <label class="desti__detail--form-check-label m-1" for="cate">
                                         9 - 11 Days
                                     </label>
@@ -221,4 +234,77 @@
         </div>
     </div>
 </div>
+
+<script>
+    var TourType = "";
+    var Duration = "";
+    $(document).ready(function() {
+        // Xử lý sự kiện khi checkbox được chọn/deselect
+        $("input[type='checkbox']").on("change", function() {
+            updateSelectedTourType();
+            updateSelectedDuration();
+        });
+
+        // Hàm để cập nhật danh sách các checkbox được chọn
+        function updateSelectedTourType() {
+            // Lặp qua tất cả các checkbox và lấy giá trị của những cái được chọn
+            var selectedTourType = [];
+            $("input[name='tourtype[]']:checked").each(function() {
+                selectedTourType.push("'"+$(this).val()+"'");
+            });
+            TourType = selectedTourType.join(", ");
+        }
+
+        function updateSelectedDuration() {
+            // Lặp qua tất cả các checkbox và lấy giá trị của những cái được chọn
+            var selectedDuration = [];
+            $("input[name='duration[]']:checked").each(function() {
+                selectedDuration.push("'"+$(this).val()+"'");
+            });
+            Duration = selectedDuration.join(", ");
+        }
+    });
+
+
+    $("#desti__detail--blog-sidebar-search").submit(function(event) {
+        // Ngăn chặn việc gửi form đi (chặn lại hành động mặc định của form)
+        event.preventDefault();
+
+        // Lấy giá trị từ thẻ input
+        var destinationValue = $("input[type='search']").val();
+
+        // Kiểm tra xem giá trị có tồn tại không
+        if (destinationValue.trim() !== "" && TourType.trim() !== "" && Duration.trim() !== "") {
+            // Chuyển hướng đến trang Destination với tham số truyền vào
+            window.location.href = "Tour.php?search=" + encodeURIComponent(destinationValue) + "&param=" + encodeURIComponent(TourType) + "&duration=" + encodeURIComponent(Duration);
+        }
+        else if (destinationValue.trim() !== "") {
+            // Chuyển hướng đến trang Destination với tham số truyền vào
+            window.location.href = "Tour.php?search=" + encodeURIComponent(destinationValue);
+        }
+        else if (TourType.trim() !== "") {
+            // Chuyển hướng đến trang Destination với tham số truyền vào
+            window.location.href = "Tour.php?param=" + encodeURIComponent(TourType);
+        }
+        else if (Duration.trim() !== "") {
+            // Chuyển hướng đến trang Destination với tham số truyền vào
+            window.location.href = "Tour.php?duration=" + encodeURIComponent(Duration);
+        }
+        else {
+            // Chuyển hướng đến trang Destination
+            window.location.href = "Tour.php";
+        }
+    });
+
+    $(document).ready(function() {
+        $(".tour__description--btn").click(function() {
+        // Lấy id của phần tử destinationt
+        var destinationId = $(this).attr("Id");
+        // Chuyển trang theo id của destinationt
+        window.location.href = "Tour_Detail.php?id=" + destinationId;
+        });
+    });
+</script>
+
+
 <?php require('includes/footer.html'); ?>

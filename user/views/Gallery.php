@@ -33,7 +33,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-1.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-1.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -44,13 +44,13 @@
                                 <div class="gallery-overlay">
                                     <i class="fa-regular fa-eye"></i>
                                 </div>
-                                <img src="../assets/img/gallery/pg-2.png" alt="">
+                                <img src="../../../user/assets/img/gallery/pg-2.png" alt="">
                             </div>
                             <div class="gallery-img-couple2">
                                 <div class="gallery-overlay">
                                     <i class="fa-regular fa-eye"></i>
                                 </div>
-                                <img src="../assets/img/gallery/pg-3.png" alt="">
+                                <img src="../../../user/assets/img/gallery/pg-3.png" alt="">
                             </div>
                         </div>
                     </div>
@@ -61,7 +61,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-4.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-4.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-8.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-8.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-5.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-5.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-7.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-7.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -104,7 +104,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-12.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-12.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-13.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-13.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -133,7 +133,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-8.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-8.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -144,13 +144,13 @@
                                 <div class="gallery-overlay">
                                     <i class="fa-regular fa-eye"></i>
                                 </div>
-                                <img src="../assets/img/gallery/pg-10.png" alt="">
+                                <img src="../../../user/assets/img/gallery/pg-10.png" alt="">
                             </div>
                             <div class="gallery-img-couple2">
                                 <div class="gallery-overlay">
                                     <i class="fa-regular fa-eye"></i>
                                 </div>
-                                <img src="../assets/img/gallery/pg-11.png" alt="">
+                                <img src="../../../user/assets/img/gallery/pg-11.png" alt="">
                             </div>
                         </div>
                     </div>
@@ -161,7 +161,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-9.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-9.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -171,7 +171,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-8.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-8.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -184,7 +184,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-5.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-5.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -194,7 +194,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-12.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-12.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -204,7 +204,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-13.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-13.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -214,7 +214,7 @@
                             <i class="fa-regular fa-eye"></i>
                         </div>
                         <div class="gallery-img-item">
-                            <img src="../assets/img/gallery/pg-14.png" alt="">
+                            <img src="../../../user/assets/img/gallery/pg-14.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -222,18 +222,9 @@
         </div>
     </div>
 
-    <script
-    type="text/javascript"
-    src="https://code.jquery.com/jquery-1.11.0.min.js"
-    ></script>
-    <script
-    type="text/javascript"
-    src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"
-    ></script>
-    <script
-    type="text/javascript"
-    src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"
-    ></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js" ></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js" ></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
     <script>
         $(document).ready(function(){

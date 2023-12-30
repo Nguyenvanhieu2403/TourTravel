@@ -169,7 +169,7 @@
 
 .progress-bar {
     height: 100%;
-    background-color: rgb(60, 109, 115);
+    background-color: var(--primary--color);
     width: 50%;
     border-radius: 10px;
 }

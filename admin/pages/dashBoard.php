@@ -1,4 +1,4 @@
-<?php require('include/header-Links.html')?>
+<?php require(__DIR__. '\\include\\header-Links.html')?>
 <body>
     <div class="test row m-0">
         <?php require('include/slideBar.html')?>
@@ -42,7 +42,7 @@
             </div>
         </div>
     </div>
-    <?php require('include/libraryJs-Links.html')?>
-    <script src="/Source/page/assets/js/slideBar.js"></script> 
-    <script src="/Source/page/assets/js/header.js"></script>
+    <?php require(__DIR__. '\\include\\libraryJs-Links.html')?>
+    <script src="../../../admin/assets/js/header.js"></script> 
+    <script src="../../../admin/assets/js/slideBar.js"></script>
 </body>

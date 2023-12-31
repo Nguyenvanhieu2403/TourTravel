@@ -1,4 +1,5 @@
 <?php require('includes/header.html'); ?>
+<?php require('includes/navbar.html'); ?>
 <?php
 	include_once('../assets/database/ConnectToSql.php');
 ?>

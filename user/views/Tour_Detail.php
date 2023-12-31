@@ -1,4 +1,5 @@
 <?php require('includes/header.html'); ?>
+<?php require('includes/navbar.html'); ?>
 <?php
 	include_once('../assets/database/ConnectToSql.php');
 ?>
@@ -52,7 +53,9 @@
 <div class="container">
     <div class="row tour__detail--container">
     <?php
-        while($row_tourDetail = mysqli_fetch_array($sql_tourDetail)){ 
+    if(mysqli_num_rows($sql_tourDetail) > 0) {
+        while($row_tourDetail = mysqli_fetch_array($sql_tourDetail)){
+            
     ?>
         <div class="col-md-8">
             <div class="row">
@@ -619,8 +622,11 @@
                 </div>
             </aside>
         </div>
-        <?php 
-            } 
+        <?php
+                }
+            }else {
+                echo '<h1 class="text-center">Không có dữ liệu</h1>';
+            }
         ?>
     </div>
 </div>

@@ -1,4 +1,5 @@
 <?php require('includes/header.html'); ?>
+<?php require('includes/navbar.html'); ?>
 <div class="header-destination ">
     <div class="content">
         <h1 class="text-center fw-bold text-light">Gallery</h1>

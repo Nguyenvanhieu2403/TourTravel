@@ -1,4 +1,5 @@
 <?php require('includes/header.html'); ?>
+<?php require('includes/navbar.html'); ?>
 <?php
 	include_once('../assets/database/ConnectToSql.php');
 ?>
@@ -20,21 +21,6 @@
 </div> 
 
 <?php
-    $query = "select t.Id, t.Title as Title, t.Price as Price, t.Day as Day, t.Night as Night, t.City as City, img.Image as Image from tour t join images img on t.Id = img.TourId where img.Status = 1";
-    if(isset($_GET['search']) ) {
-        $search = $_GET['search'];
-        $query .= " and t.Title like N'%$search%'";
-    }
-    else if( isset($_GET['param'])) {
-        $param = $_GET['param'];
-        $query .= " and t.TourType in ($param)";
-    }
-    else if(isset($_GET['duration'])) {
-        $duration = $_GET['duration'];
-        $query .= " and t.Day in ($duration)";
-    }
-
-	$sql_tour = mysqli_query($con,$query); 
 
     $queryTourType = "select distinct TourType from tour";
 	$sql_TourType = mysqli_query($con,$queryTourType); 
@@ -42,6 +28,44 @@
     $queryPackage = "select t.Title as Title, t.Price as Price, img.Image as Image from tour t join images img on t.Id = img.TourId where img.Status = 3";
 	$sql_Package = mysqli_query($con,$queryPackage); 
     $count = 0;
+
+    // Pagding
+    $itemsPerPage = 8;
+
+    // Get the current page number from the query string
+    $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+    // Calculate the offset for the SQL query
+    $offset = ($currentPage - 1) * $itemsPerPage;
+
+    // Modify your existing query to include LIMIT and OFFSET
+    $query = "SELECT COUNT(*) as totalItems,t.Id, t.Title as Title, t.Price as Price, t.Day as Day, t.Night as Night, t.City as City, img.Image as Image 
+              FROM tour t 
+              JOIN images img ON t.Id = img.TourId 
+              WHERE img.Status = 1";
+
+    if(isset($_GET['search'])) {
+        $search = $_GET['search'];
+        $query .= " AND t.Title LIKE N'%$search%'";
+    }
+    else if(isset($_GET['param'])) {
+        $param = $_GET['param'];
+        $query .= " AND t.TourType IN ($param)";
+    }
+    else if(isset($_GET['duration'])) {
+        $duration = $_GET['duration'];
+        $query .= " AND t.Day IN ($duration)";
+    }
+    $query .= " GROUP BY t.Id, t.Title, t.Price, t.Day, t.Night, t.City, img.Image";
+    $query .= " LIMIT $offset, $itemsPerPage";
+
+    // Execute the modified query
+    $sql_tour = mysqli_query($con, $query);
+
+    $countQuery = "SELECT COUNT(*) as totalItems FROM tour t JOIN images img ON t.Id = img.TourId WHERE img.Status = 1";
+    $countResult = mysqli_query($con, $countQuery);
+    $countData = mysqli_fetch_assoc($countResult);
+    $totalItems = $countData['totalItems'];
 ?>
 
 <div class="container">
@@ -93,21 +117,56 @@
                 <div class="row">
                     <div class="col-md-12">
                         <nav aria-label="tour__pagination">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                            </ul>
+                        <?php   
+
+                            function buildUrl($page) {
+                                $url = "Tour.php?page=$page";
+
+                                if (isset($_GET['search'])) {
+                                    $url .= "&search=" . urlencode($_GET['search']);
+                                }
+
+                                if (isset($_GET['param'])) {
+                                    $url .= "&param=" . urlencode($_GET['param']);
+                                }
+
+                                if (isset($_GET['duration'])) {
+                                    $url .= "&duration=" . urlencode($_GET['duration']);
+                                }
+
+                                return $url;
+                            }
+
+                            echo "<div class='col-md-12'>";
+                            echo "<nav aria-label='tour__pagination'>";
+                            echo "<ul class='pagination justify-content-center'>";
+                            
+                            // Calculate the total number of pages
+                            $totalPages = ceil($totalItems / $itemsPerPage);
+                            
+                            // Previous page link
+                            $prevPage = max($currentPage - 1, 1);
+                            echo "<li class='page-item'><a class='page-link' href='" . buildUrl($prevPage) . "' aria-label='Previous'><span aria-hidden='true'>&laquo;</span></a></li>";
+                            
+                            // Page links
+                            $startPage = max(min($currentPage - 2, $totalPages - 4), 1);
+                            $endPage = min($startPage + 4, $totalPages);
+                            
+                            for ($i = $startPage; $i <= $endPage; $i++) {
+                                echo "<li class='page-item " . ($currentPage == $i ? 'active' : '') . "'><a class='page-link' href='" . buildUrl($i) . "'>$i</a></li>";
+                            }
+                            
+                            // Next page link
+                            if ($endPage < $totalPages) {
+                                $nextPage = $endPage + 1;
+                                echo "<li class='page-item'><a class='page-link' href='" . buildUrl($nextPage) . "' aria-label='Next'><span aria-hidden='true'>&raquo;</span></a></li>";
+                            }
+                            
+                            echo "</ul>";
+                            echo "</nav>";
+                            echo "</div>";
+                        ?>
+
                         </nav>
                     </div>
                 </div>

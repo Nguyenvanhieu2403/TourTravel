@@ -42,8 +42,8 @@
                                             <td><?php echo "0". $item->get_phoneNumber() ?></td>
                                             <td><?php echo $item->get_email() ?></td>
                                             <td class="text-center align-middle">
-                                                <a href="">
-                                                    <i class="fa-solid fa-circle-plus"></i>
+                                                <a href="#" class="confirm-employee-trigger">
+                                                    <i class="fa-solid fa-circle-plus confirm-employee-icon"></i>
                                                 </a>
                                             </td> 
                                         </tr>
@@ -58,7 +58,7 @@
                                 <?php 
                                     $idEmployee = isset($_REQUEST['employeeId']) ? $_REQUEST['employeeId'] : '';
                                     if(!empty($idEmployee)){
-                                        $profileEmployee = Employee::getEmployee($idEmployee);
+                                        $profileEmployee = Employee::getEmployee($idEmployee);   
                                     echo '
                                     <div class="detail-employee">
                                         <div class="row border bg-white container-detail-employee">
@@ -182,6 +182,21 @@
                                     }
                                     ;?>
                             </div>
+                   
+                            <div class="confirm-employee-form col-md-6 position-absolute top-40 start-50 translate-middle text-center bg-white">
+                                <div class="close-confirm position-absolute top-0 end-0">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </div>
+                                <?php 
+                                    $idEmployee = isset($_REQUEST['employeeId']) ? $_REQUEST['employeeId'] : '';
+                                    if(!empty($idEmployee)){
+                                        $profileEmployee = Employee::getEmployee($idEmployee);
+                                        $fullName = $profileEmployee->get_name();
+                                        echo ' <span>Do you want '.$fullName.' become your employee ?</span>';
+                                    }
+                                ?> 
+                               
+                            </div>
                             <div class="overlay"></div>
                         </form>
                     </div>
@@ -189,32 +204,64 @@
             </div>
         </div>
     </div>
+
     <?php require('include/libraryJs-Links.html')?>
+
     <script src="../../admin/assets/js/header.js"></script>
     <script src="../../admin/assets/js/slideBar.js"></script> 
 </body>
 <script>
+   
     $(document).ready(function(){
-        $('.detail-employee').hide();
         if (localStorage.getItem('overlayVisible') === 'true') {
             $('.overlay').show();
         } else {
             $('.overlay').hide();
         }
-        
+
+        if (localStorage.getItem('displayEmployeeForm') === 'true') {
+            $('.detail-employee').show();
+        } else {
+            $('.detail-employee').hide();
+        }
+
+        if (localStorage.getItem('displayConfirmEmployee') === 'true') {
+            $('.confirm-employee-form').show();
+        } else {
+            $('.confirm-employee-form').hide();
+        }
+
+        // Display detail information employee
         $('.employee-row').click(function(){
             var employeeId = $(this).find('.idEmployee').text();
-            // Set the value of the hidden input in the form
             $('#employeeForm input[name="employeeId"]').val(employeeId);
             localStorage.setItem('overlayVisible', 'true');
+            localStorage.setItem('displayEmployeeForm', 'true');
             $('#employeeForm').submit(); 
         })
         $('.close-profile').click(function () {
             $('.detail-employee').hide();
             $('.overlay').hide();
             localStorage.setItem('overlayVisible', 'false');
-        });
+            localStorage.setItem('displayEmployeeForm', 'false');
+        }); 
         
-        $('.detail-employee').show();
+        // Display confirm form employee
+        $('.confirm-employee-trigger').click(function(e) {
+            e.stopPropagation(); 
+            var employeeId = $(this).closest('.employee-row').find('.idEmployee').text();
+            $('#employeeForm input[name="employeeId"]').val(employeeId);
+            localStorage.setItem('overlayVisible', 'true');
+            localStorage.setItem('displayConfirmEmployee', 'true');
+            $('#employeeForm').submit(); 
+        });
+
+        $('.close-confirm').click(function () {
+            $('.confirm-employee-form').hide();
+            $('.overlay').hide();
+            localStorage.setItem('overlayVisible', 'false');
+            localStorage.setItem('displayConfirmEmployee', 'false');
+        }); 
+        
     })
 </script>

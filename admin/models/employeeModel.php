@@ -149,6 +149,9 @@
             $conn->close();
             return $employee;
         }
+        public function confirmEmployee($idEmployee){
+            
+        }
     } 
     
 ?>

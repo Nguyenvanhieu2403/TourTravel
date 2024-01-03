@@ -30,9 +30,9 @@ $offset = ($currentPage - 1) * $itemsPerPage;
 
 // Your existing query code with modifications for pagination
 $query = "SELECT count(d.Id) as totalItems,  d.*, COUNT(ctd.Id) AS NumberOfTours 
-          FROM tourtravel.destination d 
-          LEFT JOIN tourtravel.citytourdestination ctd ON d.Id = ctd.IdDestination 
-          left JOIN tourtravel.tour t ON ctd.IdTour = t.Id ";
+          FROM travel.destination d 
+          LEFT JOIN travel.citytourdestination ctd ON d.Id = ctd.IdDestination 
+          left JOIN travel.tour t ON ctd.IdTour = t.Id ";
 
 if (isset($_GET['search']) && isset($_GET['param'])) {
     $searchValue = $_GET['search'];
@@ -52,8 +52,8 @@ $sql_destination = mysqli_query($con, $query);
 
 
 $querycount = "SELECT count(d.Id) as totalItems
-               FROM tourtravel.destination d 
-               LEFT JOIN tourtravel.tour t ON d.City = t.City ";
+               FROM travel.destination d 
+               LEFT JOIN travel.tour t ON d.City = t.City ";
 $sqlcount = mysqli_query($con, $querycount);
 $countData = mysqli_fetch_assoc($sqlcount);
 $totalItems = $countData['totalItems'];

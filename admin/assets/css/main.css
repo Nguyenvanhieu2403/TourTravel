@@ -101,7 +101,7 @@
     transition: border 0.3s ease;
 }
 .header-text-active{
-    background-color: rgba(60, 109, 115,0.5);
+    background-color: rgba(255, 72, 56, 0.5);
     font-weight: 700;
     transition: background-color 0.3s ease;
 }
@@ -173,9 +173,56 @@
     width: 50%;
     border-radius: 10px;
 }
-
-
 /* End working time*/
+
+/* Start Emplyee Manager */
+.detail-employee-form{
+    z-index: 100000;   
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+.container-detail-employee{
+    padding: 30px 0;
+    border-radius: 10px;
+}
+.close-confirm,
+.close-profile{
+    width: 50px;
+    padding: 5px 0;
+    text-align: center;
+    background-color: var(--primary--color);
+    border-radius: 10px;
+    color: #fff;
+    top: 5px;
+}
+.close-confirm{
+    margin: 10px;
+}
+.close-profile:hover{
+    opacity: 0.7;
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    filter:alpha(opacity=50);
+    -moz-opacity:0.5;
+    -khtml-opacity: 0.5;
+    opacity: 0.5;
+    z-index: 10000;
+}
+.confirm-employee-form{
+    height: 200px;
+    align-items: center;
+    padding-top: 80px;
+    border-radius: 10px;
+    z-index: 100000;   
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* End Emplyee Manager */
 
 
 /* Start Manager Account */
@@ -248,146 +295,150 @@
 
 /* Start Login and Register */
 .register {
-    margin: 0; 
-    padding: 0;
-    background: url('../../assets/img/login_register/background.jpg') no-repeat center center fixed; /* Đặt ảnh làm background và canh giữa */
-    background-size: cover; 
-  }
-  .register{
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  
-  }
-  .register-container{
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    border-radius: 10px;
-    padding: 20px;
-  }
-  .register-form{
-    background-color: rgba(102, 32, 71,0.3);
-    padding: 20px;
-    border-radius: 10px;
-  }
-  .register-form h1{
-    color: #fff;
-    text-align: center;
-    margin: 10px 0 50px 0;
-  }
-  .form-group{
-   margin: 15px 10px;
-   position: relative;
-  }
-  
-  .form-group input{
-    width:100%;
-    box-sizing: border-box;
-    background-color: rgba(102, 32, 71,0.3);
-    outline: none;
-    height: 35px;
-    background-color:  rgba(102, 32, 71,0.001);
-    border: none;
-    border-bottom: 1px solid #fff;
-    caret-color: #fff;
-    color: #fff;
-  }
-  .form-group input::placeholder{
-    color: #fff;
-  }
-  .group-name input{
-    width: 48%; 
-    margin-bottom: 20px;
-  }
-  .group-name input:nth-child(1) {
-    margin-right: 4%; 
-  }
-  .group-submit:hover{
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-  }
-  .group-submit input{
-    width: 100%;
-    background-color: #CA324B;
-    border: none;
-    border-radius: 5px;
-  }
-  .group-name{
-    display: flex;
-  }
-  .register-navigate-login{
-    text-align: center;
-  }
-  .register-navigate-login p{
-    color: #fff;
-  }
-  .register-navigate-login a{
-    color: #fff;
-    font-weight: 900;
-  }
-  .register-intro{
-    padding: 20px;
-    margin-right: 120px;
-  }
-  .register-intro-logo{
-    text-align: center;
-    margin: 50px 0 80px 0;
-  }
-  .register-intro-logo img {
-    width: 80%;
-    filter: invert(1);
-  }
-  .register-intro-desc p,
-  .register-intro-heading h1{
-    color:#fff ;
-    margin-left: 10%;
-    margin-bottom: 30px;
-  }
-  .register-intro-contact{
-    display: flex;
-    margin-left: 10%;
-    margin-top: 60px;
-  }
-  .register-intro-contact i{
-    color: #fff;
-    font-size: 20px;
-    margin-right: 30px;
-  }
-  .group-nameAccount input,
-  .group-password input{
-    width: 375px;
-  }
-  .group-checkbox{
-    margin: 30px 10px;
-  }
-  .group-dob input{
-    color: #fff;
-  }
-  .register-navigate-login a:hover{
-    color: #CA324B;
-    transition: color 0.3s ease;
-  }
-  .group-nameAccount input,
-  .group-password input{
-    margin: 10px 0;
-  }
-  input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-  }
-  .form-group i{
-    color: #fff;
-    position: absolute;
-    top: 10px;
-    right: 0;
-    font-size: 18px;
-  }
-  .group-nameAccount i,
-  .group-password i{
-    top: 20px;
-  }
-  
-  /* End Login and Register */
+  margin: 0; 
+  padding: 0;
+  background: url('../../../admin/assets/img/login_register/background.jpg') no-repeat center center fixed; 
+  background-size: cover; 
+  min-height: 100vh;
+  display: flex;  
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.img-svg {
+  max-height: 100%;
+  max-width: 100%;
+}
+.register-container{
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  border-radius: 10px;
+  padding: 20px;
+  width: 900px;
+}
+.register-form{
+  background-color: rgba(102, 32, 71,0.3);
+  padding: 20px;
+  border-radius: 10px;
+}
+.register-form h1{
+  color: #fff;
+  text-align: center;
+  margin: 10px 0 50px 0;
+}
+.form-group{
+ margin: 5px 10px;
+ position: relative;
+}
+
+.form-group input{
+  width:100%;
+  box-sizing: border-box;
+  background-color: rgba(102, 32, 71,0.3);
+  outline: none;
+  height: 35px;
+  background-color:  rgba(102, 32, 71,0.001);
+  border: none;
+  border-bottom: 1px solid #fff;
+  caret-color: #fff;
+  color: #fff;
+}
+.form-group input::placeholder{
+  color: #fff;
+}
+.group-name input{
+  width: 48%; 
+  margin-bottom: 20px;
+}
+.group-name input:nth-child(1) {
+  margin-right: 4%; 
+}
+.group-submit:hover{
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+.group-submit input{
+  width: 100%;
+  background-color: #CA324B;
+  border: none;
+  border-radius: 5px;
+}
+.group-name{
+  display: flex;
+}
+.register-navigate-login{
+  text-align: center;
+}
+.register-navigate-login p{
+  color: #fff;
+}
+.register-navigate-login a{
+  color: #fff;
+  font-weight: 900;
+}
+.register-intro{
+  padding: 20px;
+  /* background-image: ; */
+}
+.register-intro-logo{
+  text-align: center;
+  margin: 15px 0 70px 0;
+}
+.register-intro-logo img {
+  width: 80%;
+  /* filter: invert(1); */
+}
+.register-intro-desc p,
+.register-intro-heading h1{
+  color:#fff ;
+  margin-left: 10%;
+  margin-bottom: 30px;
+}
+.register-intro-contact{
+  display: flex;
+  margin-left: 10%;
+  margin-top: 60px;
+}
+.register-intro-contact i{
+  color: #fff;
+  font-size: 20px;
+  margin-right: 30px;
+}
+.group-checkbox{
+  margin: 30px 10px;
+}
+.group-dob input{
+  color: #fff;
+}
+.register-navigate-login a:hover{
+  color: #CA324B;
+  transition: color 0.3s ease;
+}
+.group-nameAccount input,
+.group-password-login input{
+  margin: 10px 0;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+.form-group i{
+  color: #fff;
+  position: absolute;
+  top: 10px;
+  right: 0;
+  font-size: 18px;
+}
+.group-nameAccount i,
+.group-password-login i{
+  top: 20px;
+}
+.group-password-login .open-eye-icon{
+  display: none;
+}
+.checkbox-login{
+  margin-right: 10px;
+}
+/* End Login and Register */
 
 
   /* Start Account Unlock */

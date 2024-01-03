@@ -128,10 +128,15 @@
                 </div>
             </div>
         </div>
-
-        <div class="overlay">
-            
+        <div class="confirm-employee-form col-md-6 position-absolute top-50 start-50 translate-middle text-center bg-white">
+            <div class="close-confirm position-absolute top-0 end-0">
+                <i class="fa-solid fa-xmark"></i>
+            </div>          
         </div>
+        <div class="overlay"></div>                       
+        <!-- <div class="overlay">
+            
+        </div> -->
     </div>
 
     

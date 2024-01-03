@@ -58,7 +58,7 @@
                 </div>
             </div>
             <div class="row m-5">
-                <div class="col-md-12 managerAccount__table">
+                <div class="col-md-12 managerAccount__table ">
                     <table class="col-md-12">
                         <thead class="managerAccount__table-title">
                             <tr>
@@ -84,23 +84,14 @@
                                         <?php 
                                             // Status = 4: Open
                                             // Status = 5: Locked
-                                            if($account->Status == 0){
-                                                echo "Employee";
-                                            }
-                                            else if($account->Status == 1){
-                                                echo "Account has not been approved";
-                                            }
-                                            else if($account->Status == 2){
-                                                echo "Account has been approved";
-                                            }
-                                            else if($account->Status == 3){
-                                                echo "Supper admin";
-                                            }
-                                            else if($account->Status == 4){
+                                            if($account->Status == 4){
                                                 echo "Open";
                                             }
                                             else if($account->Status == 5){
                                                 echo "Locked";
+                                            }
+                                            else {
+                                                echo "";
                                             }
                                         ?>
                                     </td>

@@ -652,7 +652,9 @@
         $con->close();
         if ($sql) {
             echo '<script>alert("Comment successfully");</script>';
-            echo '<script>window.location.href = "Tour_Detail.php?id='.$id.'";</script>';
+            echo '<script>window.location.href = window.location.href;</script>';
+            exit();
+            // echo '<script>window.location.href = "Tour_Detail.php?id='.$id.'";</script>';
             exit();
         } else {
             echo '<script>alert("Error: ' . $con->error . '");</script>';

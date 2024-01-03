@@ -1,5 +1,5 @@
-<?php require('includes/header.html'); ?>
 <?php
+    require(__DIR__. '\\include\\header-Links.html');
 	include_once('../assets/database/ConnectToSql.php');
 ?>
 <?php 
@@ -27,8 +27,9 @@
             // Convert result to array 
             $row = $result->fetch_assoc();
             $status = $row['Status'];
+            $Id = $row['Id'];
             if($status == 0){
-                header("Location: test_login_register.html"); // For employee
+                header("Location: dashBoard.php"); // For employee
             }
             else if($status == 1){
                 echo "Tài khoản chưa được phê duyệt";
@@ -39,14 +40,18 @@
                     $hour = time() + 3600 * 24 * 30;
                     setcookie('username', $nameAccount, $hour);
                     setcookie('password', $passwordAdmin, $hour);
+                    setcookie('Id', $Id, $hour);
+                    $Id = $_COOKIE['Id'];
+                    echo "<script> alert($Id)</script>";
                 }
                 else {
                     // Hủy cookie
                     setcookie('username', '', time() - 3600); 
                     setcookie('password', '', time() - 3600);
+                    setcookie('Id', '', time() - 3600);
                 }
                 echo "Đăng nhập thành công";
-                header("Location: test_login_register.html"); // Change to home page (admin)
+                header("Location: dashBoard.php"); // Change to home page (admin)
             }
             else{
                 echo "Đăng nhập với quyền supper admin thành công";

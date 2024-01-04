@@ -33,14 +33,24 @@
         mysqli_query($con, $insertQuery);
     }
 ?>
-<!-- Load data -->
+<!-- Load comment -->
+<?php
+    // Pagination
+    $idBlog = $_GET['id'];
+    $query = "SELECT * from comments where idBlog = $idBlog";
+
+    $detailComment = mysqli_query($con, $query);
+?>
+
+
+<!-- Load detail blog -->
 <?php
     if (isset($_GET['id'])) {
         $idBlog = $_GET['id'];
         $query = "SELECT blogs.*, employees.FullName, comments.IdBlog, (SELECT COUNT(*) FROM comments WHERE comments.IdBlog = blogs.Id) AS totalcomment
         FROM blogs 
         INNER JOIN employees  ON blogs.EmployeeId = employees.Id 
-        INNER JOIN comments ON blogs.Id = comments.IdBlog 
+        left  JOIN comments ON blogs.Id = comments.IdBlog 
         where blogs.Id = $idBlog GROUP BY blogs.Id;";
         
         $sql_blogDetail= mysqli_query($con,$query); 
@@ -61,8 +71,7 @@
                 <h2><?php echo $row_blogDetail['Title'] ?></h2>
             </div>
             <div class="blog-detail-content">
-                
-                <div class="blog-detail-post d-flex my-3">
+<div class="blog-detail-post d-flex my-3">
                     <a href="#">
                         <div class="blog-detail-post-author">
                             <i class="fa-solid fa-circle-user blog-item-icon"></i>
@@ -83,7 +92,7 @@
                     </a>
                 </div>
                 <div class="blog-detail-img">
-                    <img src="../assets/img/blogs_detail/<?php echo $row_blogDetail['Image']?>" alt="">
+                    <img src="../../../user/assets/img/blogs/<?php echo $row_blogDetail['image']?>" alt="">
                 </div>
                 <div class="blog-detail-text">
                     <p>
@@ -94,6 +103,10 @@
                     <div class="blog-detail-comment-heading my-3">
                         <h3>Comment <span>(<?php echo $row_blogDetail['totalcomment']?>)</span></h3>
                     </div>
+                    <?php
+                        if (mysqli_num_rows($detailComment) > 0) {
+                            while ($row_comment = mysqli_fetch_array($detailComment)) {
+                    ?>
                     <div class="blog-detail-comment-item my-4 d-flex">
                         <div class="blog-detail-comment-img me-4">
                             <img src="../assets/img/comment/comment-user-1.png" alt="">
@@ -102,13 +115,16 @@
                             <div class="blog-detail-comment-post d-flex justify-content-between">
                                 <div class="blog-detail-post-left">
                                     <div class="blog-detail-comment-name">
-                                        <h6>Silvia Perry</h6>
+                                        <h6><?php echo $row_comment['FullName'] ?></h6>
                                     </div>
                                     <div class="blog-detail-comment-date">
-                                        <span>2 April, 2021 10.00PM</span>
+                                        <span><?php 
+                                            $timestamp = strtotime($row_comment['DateCreate']);
+                                            echo date('j F, Y h.iA', $timestamp);
+                                        ?></span>
                                     </div>
                                 </div>
-                                <div class="blog-detail-post-right">
+<div class="blog-detail-post-right">
                                     <div class="blog-detail-comment-rate">
                                         <i class="fa-solid fa-star"></i>
                                         <i class="fa-solid fa-star"></i>
@@ -120,7 +136,7 @@
                                 
                             </div>
                             <div class="blog-detail-comment-text">
-                                <p>Morbi Dictum Pulvinar Velit, Id Mollis Lorem Faucibus AcUt Sed Lacinia Ipsum. Cibuses AcUt Sed Lacinia Ipsum. Suspendisse</p>
+                                <p><?php echo $row_comment['Message'] ?></p>
                             </div>
                             <div class="blog-detail-reply-btn">
                                 <a href="#">
@@ -130,6 +146,14 @@
                             </div>
                         </div>
                     </div>
+                    <?php
+                        }
+                    ?>
+                    <?php
+                    } else {
+                        echo "";
+                    }
+                    ?>
                     <div class="comment-btn text-center">
                         <a href="#">View All Comment</a>
                     </div>
@@ -157,14 +181,15 @@
                                         </div>
                                     </div>
                                     <div class="blog-detail-form-message">
-                                        <textarea name="message" name="message" cols="30" rows="10" placeholder="Your message"></textarea>
+<textarea name="message" name="message" cols="30" rows="10" placeholder="Your message"></textarea>
                                     </div>
-                                    <div class="blog-detail-form-rate my-5">
-                                        <i class="fa-regular fa-star"></i>
-                                        <i class="fa-regular fa-star"></i>
-                                        <i class="fa-regular fa-star"></i>
-                                        <i class="fa-regular fa-star"></i>
-                                        <i class="fa-regular fa-star"></i>
+                                    <div class="blog-detail-form-rate my-5" id="ratingStars">
+                                        <?php
+                                            $rating = $row_comment['Rate'] ?? 0;
+                                            for ($i = 1; $i <= 5; $i++) {
+                                                echo '<i class="fa-regular fa-star' . ($i <= $rating ? ' filled' : '') . '" data-rating="' . $i . '"></i>';
+                                            }
+                                        ?>
                                     </div>
                                     <div class="blog-detail-form-button">
                                         <button type="submit">Send Message</button>
@@ -218,7 +243,7 @@
                                 <i class="fa-solid fa-angles-right"></i>
                                 Group Tour
                             </h6>
-                            <span>(09)</span>
+<span>(09)</span>
                         </a>
                     </li>
                     <li>
@@ -275,7 +300,7 @@
                                 <p class="m-0">Map where your photos were taken and discover local points.</p>
                             </div>
                             <div class="blog-detail-post-group d-flex">
-                                <div class="blog-detail-post-writer">
+<div class="blog-detail-post-writer">
                                     <i class="fa-solid fa-circle-user blog-item-icon"></i>
                                     <span> By John Smith</span>
                                 </div>
@@ -324,7 +349,7 @@
                                     <span>Novembar 16, 2021</span>
                                 </div>
                             </div>
-                        </div>
+</div>
                     </li>
                     <li class="blog-detail-post-item my-4 d-flex">
                         <div class="blog-detail-post-img flex-1">
@@ -389,7 +414,7 @@
                                 <img src="../assets/img/blogs_detail/blog-md-1.png" alt="">
                             </a>
                         </li>
-                        <li>
+<li>
                             <a href="">
                                 <img src="../assets/img/blogs_detail/blog-md-1.png" alt="">
                             </a>
@@ -414,7 +439,22 @@
     }
 ?>
 <script>
-    
+    $(document).ready(function () {
+        $("#ratingStars i").click(function () {
+            var clickedRating = $(this).data("rating");
+            
+            // Change all stars to regular (empty) stars
+            $("#ratingStars i").removeClass("filled").removeClass("fa-solid").addClass("fa-regular");
+
+            // Change stars up to the clicked one to solid stars
+            for (var i = 1; i <= clickedRating; i++) {
+                $("#ratingStars i[data-rating='" + i + "']").addClass("filled").addClass("fa-solid").removeClass("fa-regular");
+            }
+
+            // Set the selected rating in a hidden input field (optional)
+            $("input[name='rating']").val(clickedRating);
+        });
+    });
 </script>
 
 

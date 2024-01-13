@@ -1,6 +1,7 @@
 <?php 
     require(__DIR__. '\\include\\header-Links.html');
     require_once('../../admin/models/Account.php');
+    $IdInfor = 0;
     if(isset($_COOKIE['Id'])){
         $Id = $_COOKIE['Id'];
         if (isset($_GET['search'])) {
@@ -13,6 +14,22 @@
             echo "<script>alert('Khóa tài khoản thành công')</script>";
             echo "<script>window.location.href = 'AccountUnLock.php';</script>";
         }
+        else if (isset($_GET['Id']) && isset($_GET['permission'])) {
+            $id = $_GET['Id'];
+            $permission = $_GET['permission'];
+            if($permission == 0){
+                $permission = "Staff";
+            }
+            else if($permission == 1){
+                $permission = "Manager";
+            }
+            else if($permission == 2){
+                $permission = "Admin";
+            }
+            $accounts = Account::GrantPermissions($id, $permission, $Id);
+            echo "<script>alert('Cấp quyền thành công')</script>";
+            echo "<script>window.location.href = 'AccountUnLock.php';</script>";
+        }
         else {
             $accounts = Account::GetAllAccountLock(4);
         }
@@ -20,9 +37,10 @@
     else{
         header("Location: login.php");
     }
-?>
-<body>
-    <div class="row m-0">
+    $Infors = Account::GetInforAccount(1);
+?>  
+<body class = "body">
+    <div class="row m-0 position-relative">
         <?php require('include/slideBar.html')?>
         <div class=" col-md-10 ">
             <div class="row">
@@ -94,8 +112,8 @@
                                     <td>
                                         <div class="row accountUnLock__permisstion">
                                             <div class="col-md-6">
-                                                <svg fill="currentColor" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                                                width="30" height="30" viewBox="0 0 358.397 358.397"class="text-success" id="<?php echo $account->Id; ?>"
+                                                <svg fill="currentColor" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                width="30" height="30" viewBox="0 0 358.397 358.397"class="text-success grant__permissions" id="<?php echo $account->Id; ?>"
                                                 xml:space="preserve">
                                                     <g>
                                                         <g>
@@ -128,12 +146,100 @@
                 </div>
             </div>
         </div>
-        <div class="confirm-employee-form col-md-6 position-absolute top-50 start-50 translate-middle text-center bg-white">
-            <div class="close-confirm position-absolute top-0 end-0">
-                <i class="fa-solid fa-xmark"></i>
-            </div>          
-        </div>
-        <div class="overlay"></div>                       
+        <div class="position-absolute h-100 AccountUnlock--form__infor-main">
+            <div class="confirm-employee-form col-md-6 position-absolute top-50 start-50 translate-middle text-center bg-white AccountUnlock--form__infor">
+                <div class="close-confirm position-absolute top-0 end-0">
+                    <i class="fa-solid fa-xmark AccountUnlock__close--formInfor"></i>
+                </div>
+                <div class="row AccountUnlock__infor position-relative">
+                <?php 
+                                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['IdInfor'])) {
+                                    // Lấy giá trị 'IdInfor' từ POST data
+                                    $IdInfor = $_POST['IdInfor'];
+                                    $Infors = Account::GetInforAccount($IdInfor);
+                            ?>
+                    <div class="col-md-4">
+                        <div class="AccountUnlock__img--infor">
+                            <img src=" <?php echo (($Infors->Sex)==1?"../../../admin/assets/img/User_img/user-avatar-male.png":"../../../admin/assets/img/User_img/user-avatar-female.png")  ; ?>" alt="">
+                        </div>
+                    </div>
+                    <div class="col-md-8 text-start">
+                        <div class="row">
+                            
+                            <p>Mã nhân viên: <?php echo $Infors->Id ; ?></p>
+                            <p>Họ và tên: <?php echo $Infors->FullName  ; ?> </p>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <p>Ngày sinh: 
+                                        <?php 
+                                            $dateTime = new DateTime($Infors->DOB);
+                                            $newFormat = $dateTime->format('d/m/Y');
+                                            echo   $newFormat; 
+                                        ?> 
+                                    </p>
+                                </div>  
+                                <div class="col-md-7">
+                                    <p>Giới tính: <?php echo (($Infors->Sex)==1?"Nam":"Nữ")  ; ?></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <p>Đơn vị: <?php echo $Infors->Department  ; ?>  </p>
+                                </div>
+                                <div class="col-md-7">
+                                    <p>Chức vụ: <?php echo $Infors->Position  ; ?> </p>
+                                </div>
+                            </div>
+                            <p>Email: <?php echo $Infors->Email  ; ?> </p>
+                            <p>Số điện thoại: <?php echo "0".$Infors->PhoneNumber  ; ?> </p>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    Quyền: 
+                                </div>
+                                <div class="col-md-9">
+                                    <!-- <select name="permission" id="permission">
+                                        <option value=""><?php echo $Infors->Position  ; ?></option>
+                                        <option value="0">Nhân viên</option>
+                                        <option value="1">Quản lý</option>
+                                        <option value="2">Quản trị viên</option>
+                                    </select> -->
+                                    <select name="permission" id="permission">
+                                        <?php if ($Infors->Position == "Staff"): ?>
+                                            <option value="0" selected><?php echo $Infors->Position  ; ?></option>
+                                        <?php else: ?>
+                                            <option value="0">Staff</option>
+                                        <?php endif; ?>
+
+                                        <?php if ($Infors->Position == "Manager"): ?>
+                                            <option value="1" selected><?php echo $Infors->Position  ; ?></option>
+                                        <?php else: ?>
+                                            <option value="1">Manager</option>
+                                        <?php endif; ?>
+
+                                        <?php if ($Infors->Position == "Admin"): ?>
+                                            <option value="2" selected><?php echo $Infors->Position  ; ?></option>
+                                        <?php else: ?>
+                                            <option value="2">Admin</option>
+                                        <?php endif; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            
+
+                            <div class="row justify-content-evenly m-5 AccountUnlock--formInfor_btn">
+                                <button class="btn col-md-3 btn-danger AccountUnlock--formInfor_btnCancel">Cancel</button>
+                                <button class="btn col-md-3 btn-success AccountUnlock--formInfor_btnSave" id="<?php echo $Infors->Id ; ?>">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
+                        // }
+                    }
+                    ?>
+                </div> 
+            </div>
+            <div class="overlay"></div>   
+        </div>                    
         <!-- <div class="overlay">
             
         </div> -->
@@ -166,7 +272,67 @@
                     }
                 });
             });
+            $(document).ready(function () {
+                $(".close-confirm").click(function () {
+                    $(".AccountUnlock--form__infor-main").css("display", "none");
+                });
+
+                $(".AccountUnlock--formInfor_btnCancel").click(function () {
+                    $(".AccountUnlock--form__infor-main").css("display", "none");
+                });
+            });
+
+            $(document).ready(function () {
+                $(".grant__permissions").click(function (event) {
+                    event.preventDefault();
+                    var Id = $(this).attr("id");
+                    $.post({
+                        type: 'POST',
+                        url: 'AccountUnlock.php',
+                        data: { 'IdInfor': Id },
+                        success: function (response) {
+                            $(".body").html(response);
+                            $(".AccountUnlock--form__infor-main").css("display", "block");
+                        }
+                    });
+                    return false;
+                });
+            });
+            $(document).ready(function () {
+                $(".AccountUnlock--formInfor_btnSave").click(function () {
+                    var selectedPermission = $("#permission").val();
+                    if(selectedPermission == 0){
+                        selectedPermission = "Staff";
+                    }
+                    else if(selectedPermission == 1){
+                        selectedPermission = "Manager";
+                    }
+                    else if(selectedPermission == 2){
+                        selectedPermission = "Admin";
+                    }
+                    if(confirm("Bạn có chắc muốn cấp quyền " + selectedPermission + " cho tài khoản này không?")) {
+                        var Id = $(this).attr("id");
+                        
+                        // Kiểm tra xem giá trị đã được chọn hay không
+                        if (selectedPermission) {
+                            // Thêm giá trị vào URL và chuyển hướng trang
+                            window.location.href = "AccountUnLock.php?Id=" + Id +"&permission=" + selectedPermission;
+
+                            // Ẩn các phần tử sau khi nhấp "Save"
+                            $(".confirm-employee-form").css("display", "none");
+                            $(".overlay").css("display", "none");
+                        } else {
+                            // Xử lý khi không có giá trị nào được chọn (nếu cần)
+                            alert("Please select a permission before saving.");
+                        }
+                    }
+                    else {
+                        return false;
+                    }
+                });
+            });
         });
+        
         
     </script>
 </body>

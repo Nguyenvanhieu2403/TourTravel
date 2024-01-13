@@ -4,6 +4,11 @@ require_once('../assets/database/ConnectToSql.php');
 class Account {
     public $Id;
     public $FullName;
+    public $DOB;
+    public $Sex;
+    public $Position;
+    public $Department;
+    public $Password;
     public $Email;
     public $PhoneNumber;
     public $Status;
@@ -22,6 +27,12 @@ class Account {
         $this->CreateDate = $createDate;
         $this->ModifyBy = $modifyBy;
         $this->ModifyDate = $modifyDate;
+        $this->DOB = $dob;
+        $this->Sex = $sex;
+        $this->Position = $position;
+        $this->Department = $Department;
+        $this->Password = $password;
+
     }
 
     public static function GetAll() {
@@ -34,14 +45,20 @@ class Account {
         while ($row = $result->fetch_assoc()) {
             $dsAccounts[] = new Account(
                 $row["Id"],
-                $row["FullName"],
-                $row["Email"],
-                $row["PhoneNumber"],
-                $row["Status"],
-                $row["ModifyBy"],
-                $row["ModifyDate"],
-                $row["CreateBy"],
-                $row["CreateDate"]
+            $row["FullName"],
+            $row["Email"],
+            $row["PhoneNumber"],
+            $row["Status"],
+            null, // ModifyBy
+            null, // ModifyDate
+            null, // CreateBy
+            $row["CreateDate"], // CreateDate
+            null, // Department
+            null, // Password
+            $row["Position"],
+            null, // DOB
+            null, // Sex
+            
             );
         }
 
@@ -76,7 +93,6 @@ class Account {
     }
     
     public static function Search($position, $search) {
-        $search==null?$search="":$search=$search;
         $dsAccounts = array();
         $conn = DBConnection::Connect();
 
@@ -131,6 +147,41 @@ class Account {
         $conn = DBConnection::Connect();
 
         $sql = "UPDATE employees SET Status = $Status, ModifyBy = '$modifyBy', ModifyDate = now() WHERE Id = '$id'";
+        $result = $conn->query($sql);
+
+        $conn->close();
+        return $result;
+    }
+
+    public static function GetInforAccount($id) {
+        $conn = DBConnection::Connect();
+        $sql = "SELECT e.Id, e.FullName, e.DOB, e.Sex, e.Position , d.Name ,e.Email, e.PhoneNumber  FROM employees e left join departments d on e.IdDepartment = d.Id where e.Id = '$id'";
+        $result = $conn->query($sql);
+        while ($row = $result->fetch_assoc()) {
+            $InforAccount = new Account(
+                $row["Id"],
+                $row["FullName"],
+                $row["Email"],
+                $row["PhoneNumber"],
+                $row["Status"] = null,
+                $row["ModifyBy"] = null,
+                $row["ModifyDate"] = null,
+                $row["CreateBy"] = null,
+                $row["CreateDate"] = null,
+                $row["DOB"],
+                $row["Sex"],
+                $row["Position"],
+                $row["Name"]
+            );
+        }
+        $conn->close();
+        return $InforAccount;
+    }
+
+    public static function GrantPermissions($id, $position, $modifyBy) {
+        $conn = DBConnection::Connect();
+
+        $sql = "UPDATE employees SET Position = '$position', ModifyBy = '$modifyBy', ModifyDate = now() WHERE Id = '$id'";
         $result = $conn->query($sql);
 
         $conn->close();

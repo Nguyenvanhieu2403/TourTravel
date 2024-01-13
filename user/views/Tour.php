@@ -22,7 +22,7 @@
 
 <?php
 
-    $queryTourType = "select distinct TourType from tour";
+    $queryTourType = "select distinct TourType from tour where Status = 1";
 	$sql_TourType = mysqli_query($con,$queryTourType); 
 
     $queryPackage = "select t.Title as Title, t.Price as Price, img.Image as Image from tour t join images img on t.Id = img.TourId where img.Status = 3";

@@ -451,8 +451,78 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0.6;
   }
 
-  .overlay {
-    background-color: #6e6b7b;
+  .close-confirm:hover {
+    cursor: pointer;
+    opacity: 0.6;
   }
 
+  .AccountUnlock--form__infor {
+    height: 100%;
+  }
+
+  .AccountUnlock__img--infor img {
+    height: 140px;
+    background-color: #5680db;
+  }
+
+  .AccountUnlock--formInfor_btn {
+    height: 40px;
+  }
+
+  .AccountUnlock--form__infor-main {
+    top: 30%;
+  }
+
+  .AccountUnlock--form__infor-main {
+    display: none;
+  }
+
+  .confirm-dialog strong {
+    font-weight: bold;
+}
   /* End Account Unlock */
+
+
+  /* Start Manager Tour */
+  .managerTour--icon__delete svg {
+    cursor: pointer;
+    color: var(--primary--color);
+  }
+
+
+  .managerTour--icon__delete svg:hover {
+    opacity: 0.6;
+  }
+  /* End Manager Tour */
+
+  
+
+  /* Start Manager Tour Detail*/
+
+  .managerTourDetail--container {
+    box-shadow:0 1px 3px #b8b5b5 ;
+    padding: 20px;
+    width: 80%;
+    margin-left: 10%;
+  }
+
+  .plus, .minus {
+    background-color: white;
+    border: 1px solid black;
+  }
+
+  .plus, .minus:hover {
+    cursor: pointer;
+  }
+
+  #table_size th, td {
+    border: 1px solid black;
+    height: 40px;
+    border-collapse: collapse;
+    text-align: center;
+    width: 100px;
+  }
+
+  /* End Manager Tour Detail */
+
+

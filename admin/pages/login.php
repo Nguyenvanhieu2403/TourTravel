@@ -37,6 +37,7 @@
                 // Convert result to array 
                 $row = $result->fetch_assoc();
                 $passwordEncode = $row['Password'];
+                $idEmployee = $row['Id'];
                 $status = $row['Status'];
                 if(!empty( $row['idDepartment'])){
                     $_SESSION['idDepartment'] = $row['idDepartment'];
@@ -50,10 +51,12 @@
                     if($rememberMe){
                         $hour = time() + 3600 * 24 * 30;
                         setcookie('username', $nameAccount, $hour);
+                        setcookie('IdUser', $idEmployee, $hour);
                         // setcookie('password', $passwordAdmin, $hour);
                     }
                     else {
                         setcookie('username', '', time() - 3600); 
+                        setcookie('IdUser', '', time() - 3600);
                         // setcookie('password', '', time() - 3600);
                     }
                     if($status == 0){

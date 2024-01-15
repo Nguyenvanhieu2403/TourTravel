@@ -36,7 +36,7 @@
             if ($result->num_rows > 0) {
                 // Convert result to array 
                 $row = $result->fetch_assoc();
-                $passwordEncode = $row['Password'];
+                $passwordEncode = $row['password'];
                 $status = $row['Status'];
                 if(!empty( $row['idDepartment'])){
                     $_SESSION['idDepartment'] = $row['idDepartment'];
@@ -62,7 +62,7 @@
                     else if($status == 1){
                         header("Location: dashBoard.php"); // Wait to approve
                     }
-                    else if($status == 2){
+                    else if($status == 2 ){
                         echo "Đăng nhập thành công";
                         header("Location: dashBoard.php"); // Change to home page (admin)
                     }

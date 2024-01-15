@@ -106,6 +106,35 @@
                         $row['Email']
                     );
                     $employee->id = $row['Id'];
+                    $listEmloyee[] = $employee;
+                }
+                $stmt->close();
+            }
+            else{
+                echo "Error: ". $stmt->error;
+            }
+            $conn->close();
+            return $listEmloyee;
+        }
+
+        public static function getEmployeeInDepartment($idDepartment){
+            $listEmloyee = array();
+            $conn = DbConnection::Connect();
+            $sql = 'select Id, FullName , PhoneNumber,Email from employees where idDepartment = ? and status = ?';
+            $stmt = $conn->prepare($sql);
+            $status = 1;
+            $stmt->bind_param('ii',$idDepartment,$status);
+
+            if($stmt->execute()){
+                $result = $stmt->get_result();
+                while($row = $result->fetch_assoc()){
+                    $employee = new Employee(
+                        $row['FullName'],
+                        $row['PhoneNumber'],
+                        $row['Email']
+                    );
+                    $employee->id = $row['Id'];
+                    
                     // $employee->status = $row['Status'];
                     $listEmloyee[] = $employee;
                 }
@@ -118,9 +147,12 @@
             return $listEmloyee;
         }
 
-        public static function getEmployee($idEmployee){
+        public static function getEmployeeById($idEmployee){
             $conn = DbConnection::Connect();
-            $sql = 'select * from employees where id = ?';
+            $sql = 'SELECT e.*, d.name AS nameDepartment
+                    FROM employees e
+                    LEFT JOIN department d ON e.idDepartment = d.id
+                    WHERE e.id = ?';
             $stmt = $conn->prepare($sql);
             $stmt->bind_param('i',$idEmployee);
 
@@ -140,7 +172,8 @@
                 $employee->sex = $row['Sex'];
                 $employee->status = $row['Status'];
                 $employee->address = $row['Address'];
-               
+                $employee->department = $row['nameDepartment'];
+                
                 $stmt->close();
             }
             else{
@@ -149,9 +182,128 @@
             $conn->close();
             return $employee;
         }
-        public function confirmEmployee($idEmployee){
+        
+        // Search employee without dept
+        public static function searchEmployeeWithouDept($nameEmployee){
+            $conn = DbConnection::Connect();
+            $sql = "SELECT * FROM employees WHERE FullName LIKE ? and  idDepartment is NULL and Status = ?";
+            $stmt = $conn->prepare($sql);
+            $searchName = "%" . $nameEmployee . "%";
+            $status = 0;
+            $stmt->bind_param("si", $searchName,$status);
+            $listEmployee = array();
+
+            if($stmt->execute()){
+                $result = $stmt->get_result();
+                if(mysqli_num_rows($result) > 0) {
+                    while($row = $result->fetch_assoc()){
+                        $employee = new Employee(
+                            $row['FullName'],
+                            $row['PhoneNumber'],
+                            $row['Email']
+                        );
+                        $employee->id = $row['Id'];
+                        // $employee->status = $row['Status'];
+                        $listEmployee[] = $employee;
+                    }
+                }
+                else{
+                    echo "Không tìm thấy nhân viên trên";
+                }
+                $stmt->close();
+            }
+            else {
+                echo "Error executing the query: " . $stmt->error;
+            }
+            $conn->close();
+            return $listEmployee;
+        }
+
+        // Search employee without dept
+        public static function searchEmployeeWithDept($nameEmployee){
+            $conn = DbConnection::Connect();
+            $sql = "SELECT * FROM employees WHERE FullName LIKE ? and  idDepartment is not NULL and Status = ?";
+            $stmt = $conn->prepare($sql);
+            $searchName = "%" . $nameEmployee . "%";
+            $status = 1;
+            $stmt->bind_param("si", $searchName,$status);
+            $listEmployee = array();
+
+            if($stmt->execute()){
+                $result = $stmt->get_result();
+                if(mysqli_num_rows($result) > 0) {
+                    while($row = $result->fetch_assoc()){
+                        $employee = new Employee(
+                            $row['FullName'],
+                            $row['PhoneNumber'],
+                            $row['Email']
+                        );
+                        $employee->id = $row['Id'];
+                        // $employee->status = $row['Status'];
+                        $listEmployee[] = $employee;
+                    }
+                }
+                else{
+                    echo "Không tìm thấy nhân viên trên";
+                }
+                $stmt->close();
+            }
+            else {
+                echo "Error executing the query: " . $stmt->error;
+            }
+            $conn->close();
+            return $listEmployee;
+        }
+
+        // Count employee
+        public static function totalEmployee($listEmployee){
+            return count($listEmployee);
+        }
+        public static function confirmEmployee($idEmployee,$idDepartment){
+            $conn = DbConnection::Connect();
+            $sql = "UPDATE EMPLOYEES SET Status = 1, idDepartment = ? WHERE Id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('ii', $idDepartment, $idEmployee);
+            $stmt->execute();
             
+            $affectedRows = $stmt->affected_rows;
+            if($affectedRows >0){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+
+        public static function updateEmployee($idEmployee,$position){
+            $conn = DbConnection::Connect();
+            $sql = "UPDATE EMPLOYEES SET Position = ? WHERE Id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('si',$position,$idEmployee);
+            $stmt->execute();
+            
+            $affectedRows = $stmt->affected_rows;
+            if($affectedRows >0){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        public static function deleteEmployee($idEmployee){
+            $conn = DbConnection::Connect();
+            $sql = "UPDATE EMPLOYEES SET Status = 0, idDepartment = NULL WHERE Id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('i', $idEmployee);
+            $stmt->execute();
+            
+            $affectedRows = $stmt->affected_rows;
+            if($affectedRows >0){
+                return true;
+            }
+            else{
+                return false;
+            }
         }
     } 
-    
 ?>

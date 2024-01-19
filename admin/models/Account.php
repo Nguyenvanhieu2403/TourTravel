@@ -17,7 +17,7 @@ class Account {
     public $ModifyBy;
     public $ModifyDate;
 
-    public function __construct($id, $fullName, $email, $phoneNumber, $status, $modifyBy, $modifyDate , $createBy , $createDate) {
+    public function __construct($id, $fullName, $email, $phoneNumber, $status, $modifyBy, $modifyDate , $createBy , $createDate, $dob, $sex, $position, $Department, $password) {
         $this->Id = $id;
         $this->FullName = $fullName;
         $this->Email = $email;
@@ -45,19 +45,19 @@ class Account {
         while ($row = $result->fetch_assoc()) {
             $dsAccounts[] = new Account(
                 $row["Id"],
-            $row["FullName"],
-            $row["Email"],
-            $row["PhoneNumber"],
-            $row["Status"],
-            null, // ModifyBy
-            null, // ModifyDate
-            null, // CreateBy
-            $row["CreateDate"], // CreateDate
-            null, // Department
-            null, // Password
-            $row["Position"],
-            null, // DOB
-            null, // Sex
+                $row["FullName"],
+                $row["Email"],
+                $row["PhoneNumber"],
+                $row["Status"],
+                null, // ModifyBy
+                null, // ModifyDate
+                null, // CreateBy
+                $row["CreateDate"], // CreateDate
+                null, // Department
+                null, // Password
+                null,
+                null, // DOB
+                null, // Sex
             
             );
         }
@@ -71,7 +71,7 @@ class Account {
         $dsAccounts = array();
         $conn = DBConnection::Connect();
 
-        $sql = "SELECT e.Id, e.FullName, e.Email, e.PhoneNumber, e.Status, e1.FullName as ModifyBy , e.ModifyDate, e.CreateBy, e.CreateDate  FROM employees e left join employees e1 on e.ModifyBy = e1.Id where e.Status = $Status";
+        $sql = "SELECT e.Id, e.FullName, e.Email, e.PhoneNumber, e.Status, e1.FullName as ModifyBy , e.ModifyDate, e.CreateBy, e.CreateDate   FROM employees e left join employees e1 on e.ModifyBy = e1.Id where e.Status = $Status";
         $result = $conn->query($sql);
 
         while ($row = $result->fetch_assoc()) {
@@ -81,10 +81,15 @@ class Account {
                 $row["Email"],
                 $row["PhoneNumber"],
                 $row["Status"],
-                $row["ModifyBy"],
-                $row["ModifyDate"],
-                $row["CreateBy"],
-                $row["CreateDate"]
+                null, // ModifyBy
+                null, // ModifyDate
+                null, // CreateBy
+                $row["CreateDate"], // CreateDate
+                null, // Department
+                null, // Password
+                null,
+                null, // DOB
+                null, // Sex
             );
         }
 
@@ -95,8 +100,19 @@ class Account {
     public static function Search($position, $search) {
         $dsAccounts = array();
         $conn = DBConnection::Connect();
-
-        $sql = "SELECT e.Id, e.FullName, e.Email, e.PhoneNumber, e.Status, e1.FullName as ModifyBy , e.ModifyDate, e.CreateBy, e.CreateDate  FROM employees e left join employees e1 on e.Id = e1.ModifyBy where e.Position = '$position' and e.FullName like '%$search%'";
+        $sql = "SELECT distinct e.Id, e.FullName, e.Email, e.PhoneNumber, e.Status,  e.CreateDate  FROM employees e left join employees e1 on e.Id = e1.ModifyBy ";
+        if($position != null || $search != null){
+            $sql .= " where ";
+        }
+        if($position == null && $search != null){
+            $sql .= " e.FullName like '%$search%'";
+        }
+        if($search == null && $position != null){
+            $sql .= " e.Position = '$position'";
+        }
+        if($search != null && $position != null){
+            $sql .= " e.Position = '$position' and e.FullName like '%$search%'";
+        }
         $result = $conn->query($sql);
 
         while ($row = $result->fetch_assoc()) {
@@ -106,10 +122,15 @@ class Account {
                 $row["Email"],
                 $row["PhoneNumber"],
                 $row["Status"],
-                $row["ModifyBy"],
-                $row["ModifyDate"],
-                $row["CreateBy"],
-                $row["CreateDate"]
+                null, // ModifyBy
+                null, // ModifyDate
+                null, // CreateBy
+                $row["CreateDate"], // CreateDate
+                null, // Department
+                null, // Password
+                null,
+                null, // DOB
+                null, // Sex
             );
         }
 
@@ -117,12 +138,16 @@ class Account {
         return $dsAccounts;
     }
 
-    public static function SearchAccountLock( $search) {
-        $search==null?$search="":$search=$search;
+    public static function SearchAccountLock($search) {
         $dsAccounts = array();
         $conn = DBConnection::Connect();
 
-        $sql = "SELECT e.Id, e.FullName, e.Email, e.PhoneNumber, e.Status, e1.FullName as ModifyBy , e.ModifyDate, e.CreateBy, e.CreateDate  FROM employees e left join employees e1 on e.Id = e1.ModifyBy where e.Status = 5 and e.FullName like '%$search%'";
+        $sql = "SELECT e.Id, e.FullName, e.Email, e.PhoneNumber, e.Status, e1.FullName as ModifyBy , e.ModifyDate, e.CreateBy, e.CreateDate FROM employees e left join employees e1 on e.Id = e1.ModifyBy where e.Status = 5 ";
+        
+        if($search != null){
+            $sql .= " and e.FullName like '%$search%'";
+        }
+
         $result = $conn->query($sql);
 
         while ($row = $result->fetch_assoc()) {
@@ -132,10 +157,15 @@ class Account {
                 $row["Email"],
                 $row["PhoneNumber"],
                 $row["Status"],
-                $row["ModifyBy"],
-                $row["ModifyDate"],
-                $row["CreateBy"],
-                $row["CreateDate"]
+                null, // ModifyBy
+                null, // ModifyDate
+                null, // CreateBy
+                $row["CreateDate"], // CreateDate
+                null, // Department
+                null, // Password
+                $row["Position"],
+                null, // DOB
+                null, // Sex
             );
         }
 
@@ -171,7 +201,8 @@ class Account {
                 $row["DOB"],
                 $row["Sex"],
                 $row["Position"],
-                $row["Name"]
+                $row["Name"],
+                null
             );
         }
         $conn->close();

@@ -66,7 +66,7 @@
             <div class="row m-5">
                 <div class="col-md-12 managerAccount__table">
                     <table class="col-md-12">
-                        <thead>
+                        <thead class="managerAccount__table-title">
                             <tr>
                                 <th>ID</th>
                                 <th>Full Name</th>

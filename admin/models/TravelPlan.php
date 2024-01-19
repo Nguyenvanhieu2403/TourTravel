@@ -79,6 +79,17 @@ class TravelPlan {
         $conn->close();
         return $travelPlan;
     }
+
+
+    public static function InsertTravelPlan($tourDetailId, $title, $startTime, $endTime, $description) {
+        $conn = DBConnection::Connect();
+
+        $sql = "INSERT INTO travelplan (TourDetailId, Title, StartTime, EndTime, Description) VALUES ('$tourDetailId', '$title', '$startTime', '$endTime', '$description')";
+        $result = $conn->query($sql);
+
+        $conn->close();
+        return $result;
+    }
     
 }
 

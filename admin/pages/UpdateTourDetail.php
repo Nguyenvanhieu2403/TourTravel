@@ -1,57 +1,47 @@
 <?php 
     require(__DIR__. '\\include\\header-Links.html');
     require_once('../../admin/models/Tour.php');
-    $tours;
-    if (isset($_GET['search']) && isset($_GET['tourtype'])) {
-        $search = $_GET['search'];
-        $tourtype = $_GET['tourtype'];
-        $tours = Tour::Search($search, $tourtype);
-    } 
-    else if (isset($_GET['search'])) {
-        $search = $_GET['search'];
-        $tours = Tour::Search($search, null);
-    } 
-    else if (isset($_GET['tourtype'])) {
-        $tourtype = $_GET['tourtype'];
-        $tours = Tour::Search(null, $tourtype);
-    }else {
-        $tours = Tour::GetAll();
-    }
-
-    if (isset($_GET['lock'])) {
-        $id = $_GET['lock'];
-        Tour::DeleteTour($id);
-        header("Location: ManagerTours.php");
-    }
+    require_once('../../admin/models/TourDetail.php');
 
     if (isset($_GET['tour']) 
     && isset($_GET['img']) 
     && isset($_GET['tourDetail']) 
     && isset($_GET['travelPlan']) 
-    && isset($_GET['imgDetail'])) {
-    $tour = json_decode(urldecode($_GET['tour']), true);
-    $img = json_decode(urldecode($_GET['img']), true);
-    $tourDetail = json_decode(urldecode($_GET['tourDetail']), true);
-    $travelPlan = json_decode(urldecode($_GET['travelPlan']), true);
-    $imgDetail = json_decode(urldecode($_GET['imgDetail']), true);
+    && isset($_GET['imgDetail'])
+    && isset($_GET['TourId'])
+    && isset($_GET['TourDetailId'])) {
+        $tour = json_decode(urldecode($_GET['tour']), true);
+        $img = json_decode(urldecode($_GET['img']), true);
+        $tourDetail = json_decode(urldecode($_GET['tourDetail']), true);
+        $travelPlan = json_decode(urldecode($_GET['travelPlan']), true);
+        $imgDetail = json_decode(urldecode($_GET['imgDetail']), true);
+        $TourId = $_GET['TourId'];
+        $TourDetailId = $_GET['TourDetailId'];
 
-    // Kiểm tra xem giải mã JSON có thành công không
-    if ($tour !== null && $img !== null && $tourDetail !== null && $travelPlan !== null && $imgDetail !== null) {
-        // Gọi hàm InsertTour với dữ liệu đã giải mã
-        $result = Tour::InsertTour($tour, $img, $tourDetail, $travelPlan, $imgDetail);
-        if($result) {
-            echo "<script>alert('Successfull')</script>";
-            echo "<script>window.location.href = 'ManagerTourDetail.php'</script>";
+        // Kiểm tra xem giải mã JSON có thành công không
+        if ($tour !== null && $img !== null && $tourDetail !== null && $travelPlan !== null && $imgDetail !== null) {
+            // Gọi hàm InsertTour với dữ liệu đã giải mã
+            $result = Tour::UpdateTour($tour, $img, $tourDetail, $travelPlan, $imgDetail, $TourId, $TourDetailId );
+            if($result) {
+                echo "<script>alert('Successfull')</script>";
+                echo "<script>window.location.href = 'ManagerTours.php'</script>";
+            } else {
+                echo "<script>alert('Error')</script>";
+                echo "<script>window.location.href = 'ManagerTours.php'</script>";
+            }
         } else {
-            echo "<script>alert('Error')</script>";
-            echo "<script>window.location.href = 'ManagerTourDetail.php'</script>";
+            // Xử lý lỗi nếu giải mã không thành công
+            echo "Failed to decode JSON data.";
         }
-    } else {
-        // Xử lý lỗi nếu giải mã không thành công
-        echo "Failed to decode JSON data.";
     }
-}
+    $tours;
+    $tourDetails;
 
+    if(isset($_GET['id'])) {
+        $tourId = $_GET['id'];
+        $tours = Tour::GetTourById($tourId);
+        $tourDetails = TourDetail::GetTourDetailByTourId($tourId);
+    }
     $tourType = Tour::GetAllTourType();
 ?>
 <body>
@@ -63,6 +53,7 @@
                     <?php require('include/header.html')?>
                 </div>
             </div>
+            <?php foreach ($tours as $tour): ?>
             <div class="row ">
                 <div class="managerTourDetail--container">  
                     <h1>Tour</h1>
@@ -70,10 +61,12 @@
                         <div class="col-md-5 managerTourDetail--element m-3">
                             <div class="row">
                                 <div class="col-md-4 text-start">
-                                    <span>Title Tour</span>
+                                    <div class="tour_id">
+                                        <span id="<?php echo $tour->Id ?>">Title Tour</span>
+                                    </div>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="text" name="titleTour" id="">
+                                    <input class="w-100" type="text" name="titleTour" id="" value="<?php echo $tour->TitleTour ?>">
                                 </div>
                             </div>
                         </div>
@@ -83,7 +76,7 @@
                                     <span>Price</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="number" name="price" id="">
+                                    <input class="w-100" type="number" name="price" id="" value="<?php echo $tour->Price ?>">
                                 </div>
                             </div>
                         </div>
@@ -93,7 +86,7 @@
                                     <span>Day</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="number" name="day" id="">
+                                    <input class="w-100" type="number" name="day" id="" value="<?php echo $tour->Day ?>">
                                 </div>
                             </div>
                         </div>
@@ -103,7 +96,7 @@
                                     <span>Night</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="Number" name="night" id="">
+                                    <input class="w-100" type="Number" name="night" id="" value="<?php echo $tour->Night ?>">
                                 </div>
                             </div>
                         </div>
@@ -113,7 +106,7 @@
                                     <span>City</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="text" name="city" id="">
+                                    <input class="w-100" type="text" name="city" id="" value="<?php echo $tour->City ?>">
                                 </div>
                             </div>
                         </div>
@@ -124,12 +117,16 @@
                                 </div>
                                 <div class="col-md-8 text-end">
                                     <select name="tourType" id="TourType">
-                                        <option value="New York City">New York City</option>
-                                        <option value="Adventure Tour">Adventure Tour</option>
-                                        <option value="Couple Tour">Couple Tour</option>
-                                        <option value=" Village Tour"> Village Tour</option>
-                                        <option value="Group Tour">Group Tour</option>
-                                        <option value="Village Tour">Village Tour</option>
+                                        <option value="<?php echo $tour->TourType ?>"><?php echo $tour->TourType; $tourtypeCheck = $tour->TourType; ?></option>
+                                    <?php foreach ($tourType as $type): 
+                                        if($type->TourType == $tourtypeCheck) {
+                                            continue;
+                                        }
+                                        else {
+                                    ?>
+                                        
+                                        <option value="<?php echo $type->TourType; ?>"><?php echo $type->TourType; ?></option>
+                                    <?php };endforeach; ?>
                                     </select>
                                 </div>
                             </div>
@@ -140,13 +137,19 @@
                                     <span>Image</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="text" name="img" id="">
+                                    <input class="w-100" type="text" name="img" id="" value="<?php echo $tour->Image ?>">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <?php endforeach; ?>
+
+            <?php 
+                if($tourDetails != null) {
+                foreach ($tourDetails as $tourDetail): 
+            ?>
             <div class="row mt-5">
                 <div class="managerTourDetail--container">  
                     <h1>Tour Detail</h1>
@@ -154,10 +157,12 @@
                         <div class="col-md-5 managerTourDetail--element m-3">
                             <div class="row">
                                 <div class="col-md-4 text-start">
-                                    <span>Name</span>
+                                    <div class="TourDetal_Id">
+                                        <span id="<?php echo $tourDetail->Id ?>">Name</span>
+                                    </div>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="text" name="nameDetail" id="">
+                                    <input class="w-100" type="text" name="nameDetail" id="" value="<?php echo $tourDetail->Name ?>">
                                 </div>
                             </div>
                         </div>
@@ -167,7 +172,7 @@
                                     <span>Description</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <textarea class="w-100" type="text" name="description" id=""> </textarea>
+                                    <textarea class="w-100" type="text" name="description" id="" ><?php echo $tourDetail->DescriptionInfo ?></textarea>
                                 </div>
                             </div>
                         </div>
@@ -177,7 +182,7 @@
                                     <span>Title Information</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="text" name="titleInformation" id="">
+                                    <input class="w-100" type="text" name="titleInformation" id="" value="<?php echo $tourDetail->TitleInfor ?>">
                                 </div>
                             </div>
                         </div>
@@ -187,7 +192,7 @@
                                     <span>Title Travel Plan</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="text" name="titleTravelPlan" id="">
+                                    <input class="w-100" type="text" name="titleTravelPlan" id="" value="<?php echo $tourDetail->TitleTravelPlan ?>">
                                 </div>
                             </div>
                         </div>
@@ -197,7 +202,7 @@
                                     <span>Transport</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="text" name="transport" id="">
+                                    <input class="w-100" type="text" name="transport" id="" value="<?php echo $tourDetail->Transport ?>">
                                 </div>
                             </div>
                         </div>
@@ -207,7 +212,7 @@
                                     <span>Departure Time</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="date" name="departureTime" id="">
+                                    <input class="w-100" type="date" name="departureTime" id="" value="<?php echo $tourDetail->DepartureTime ?>">
                                 </div>
                             </div>
                         </div>
@@ -244,7 +249,7 @@
                                     <span>Return Time</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="date" name="returnTime" id="">
+                                    <input class="w-100" type="date" name="returnTime" id="" value="<?php echo $tourDetail->ReturnTime ?>">
                                 </div>
                             </div>
                         </div>
@@ -254,7 +259,7 @@
                                     <span>Included</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="text" name="included" id="">
+                                    <input class="w-100" type="text" name="included" id="" value="<?php echo $tourDetail->Included ?>">
                                 </div>
                             </div>
                         </div>
@@ -264,7 +269,7 @@
                                     <span>Excluded</span>
                                 </div>
                                 <div class="col-md-8 text-end">
-                                    <input class="w-100" type="text" name="excluded" id="">
+                                    <input class="w-100" type="text" name="excluded" id="" value="<?php echo $tourDetail->Excluded ?>">
                                 </div>
                             </div>
                         </div>
@@ -275,7 +280,7 @@
                                 </div>
                                 <div class="col-md-8 text-end img-container">
                                     <div id="img-container">
-                                        <input class="w-100" type="text" name="img" id="img">
+                                        <input class="w-100" type="text" name="img" id="img" value="<?php echo $tourDetail->Image ?>">
                                     </div>
                                     <span><button class="plus add-img"><i class="fa-solid fa-plus"></i></button></span>
                                     <span><button class="minus delete-img"><i class="fa-solid fa-minus"></i></button></span>
@@ -291,6 +296,8 @@
                     </div>
                 </div>
             </div>
+            <?php 
+            endforeach;  }?>
         </div>
     </div>
     <?php require(__DIR__. '\\include\\libraryJs-Links.html')?>
@@ -435,8 +442,11 @@ $('.ManagerTourDetail__save').click(function(e) {
     }
 
     if (columnData.length > 0 && columnData[0] === null) {
-            columnData.shift();
-        }
+        columnData.shift();
+    }
+
+    var TourId = $('.TourDetal_Id span').attr('id');
+    var TourDetailId = $('.TourDetal_Id span').attr('id');
 
     TravelPlan =columnData;
     ImgDetail = layGiaTriInput();
@@ -448,7 +458,9 @@ $('.ManagerTourDetail__save').click(function(e) {
     var ImgDetail = encodeURIComponent(JSON.stringify(ImgDetail));
 
     // Truyền dữ liệu qua URL
-    window.location.href = `ManagerTourDetail.php?tour=${tourString}&img=${imgString}&tourDetail=${tourDetailString}&travelPlan=${travelPlanString}&imgDetail=${ImgDetail}`;
+    window.location.href = `UpdateTourDetail.php?tour=${tourString}&img=${imgString}&tourDetail=${tourDetailString}&travelPlan=${travelPlanString}&imgDetail=${ImgDetail}&TourId=${TourId}&TourDetailId=${TourDetailId}`;
+    // console.log(TravelPlan);
+    // console.log(travelPlanString);
 });
 
 $('.ManagerTourDetail__cancel').click(function(e) {

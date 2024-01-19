@@ -1,11 +1,60 @@
 <?php require('includes/header.html'); ?>
 <?php require('includes/navbar.html'); ?>
 
+<?php
+	include_once('../assets/database/ConnectToSql.php');
+?>
+
+<?php
+    $queryTour = "select * from tour limit 6";
+    $sqlTour = mysqli_query($con, $queryTour);
+
+    $queryAllTours = "select * from tour";
+    $sqlAllTours = mysqli_query($con, $queryAllTours);
+
+    $queryDes = "select * from destination limit 8";
+    $sqlDes = mysqli_query($con, $queryDes);
+
+    $queryBlog = "select * from blogs order by Datecreate desc limit 3";
+    $sqlBlog = mysqli_query($con, $queryBlog);
+
+    $queryEmp = "select * from employees";
+    $sqlEmp = mysqli_query($con, $queryEmp);
+
+    $queryType = "select distinct TourType from tour";
+    $sqlType = mysqli_query($con, $queryType);
+
+    $queryCityTour = "select distinct City from tour";
+    $sqlCityTour = mysqli_query($con, $queryCityTour);
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $des = $_POST['city'];
+        $tourtype = $_POST['tourtype'];
+        $date = $_POST['date'];
+
+        if (!empty($des) && !empty($tourtype) && !empty($date)) {
+            $queryTour = "select t.*, td.DepartureTime, td.Returntime from tour t join tourdetail td on t.id = td.TourId where City='$des' and TourType='$tourtype' and '$date' between DepartureTime and Returntime";
+            $sqlTour = mysqli_query($con, $queryTour);
+        }
+        else {
+            echo "<script>
+                    alert('Vui lòng nhập đầy đủ thông tin.');
+                </script>";
+        }
+    }
+    else {
+        $queryTour = "select * from tour limit 6";
+        $sqlTour = mysqli_query($con, $queryTour);
+    }
+?>
+
+?>
+
 <div class="homepage">
     <div class="homepage_first">    
         <div class="homepage_search">
             <div class="container">
-                <div class="row home justify-content-between">
+                <form id='searchForm' class="row home justify-content-between" action="" method="POST">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-10 row mb-3">
                         <div class="col-lg-3 col-md-6 px-0">
                             <div class="destination d-flex p-1 my-1">
@@ -17,11 +66,15 @@
                                 </div>
                                 <div class="des-infor ms-3">
                                     <label class="fw-bold" for="">Destination</label>
-                                    <select class="form-select" aria-label="Default select example">
-                                        <option selected>Where are you going ?</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
+                                    <select class="form-select" aria-label="Default select example" name='city'>
+                                        <option selected hidden>Where are you going ?</option>
+                                        <?php
+                                            while($row_citytour = mysqli_fetch_array($sqlCityTour)) {
+                                        ?>
+                                            <option value="<?php echo $row_citytour['City'] ?>"><?php echo $row_citytour['City'] ?></option>
+                                        <?php
+                                            }
+                                        ?>
                                     </select>
                                 </div>
                             </div>  
@@ -35,11 +88,15 @@
                                 </div>
                                 <div class="travel-infor ms-3">
                                     <label class="fw-bold" for="">Travel Type</label>
-                                    <select class="form-select" aria-label="Default select example" style="width: 120%">
-                                        <option selected>All activity</option>
-                                        <option value="1">Type 1</option>
-                                        <option value="2">Type 2</option>
-                                        <option value="3">Type 3</option>
+                                    <select class="form-select" aria-label="Default select example" style="width: 120%" name='tourtype'>
+                                        <option selected hidden>All activity</option>
+                                        <?php
+                                            while($row_type = mysqli_fetch_array($sqlType)) {
+                                        ?>
+                                            <option value="<?php echo $row_type['TourType'] ?>"><?php echo $row_type['TourType'] ?></option>
+                                        <?php
+                                            }
+                                        ?>
                                     </select>
                                 </div>
                             </div>
@@ -54,7 +111,7 @@
                                 </div>
                                 <div class="person-infor ms-3 col-xl-2">
                                     <label class="fw-bold" for="">Person</label>
-                                    <select class="form-select" aria-label="Default select example" style="width: 150%">
+                                    <select class="form-select" aria-label="Default select example" style="width: 150%" name='person'>
                                         <option selected value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -72,17 +129,17 @@
                                 </div>
                                 <div class="capslock-infor ms-3">
                                     <p class="m-0 fw-bold">When</p>
-                                    <input class="date" type="date" placeholder="Select your date">
+                                    <input class="date" type="date" name="date" placeholder="Select your date">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-2 ps-0">
                         <div class="submit d-flex justify-content-center align-items-center">
-                            <button class="fw-bold btn" type="submit">Find Now</button>
+                            <button id="search" class="fw-bold btn-find" type="submit">Find Now</button>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
         <div class="slide">
@@ -121,33 +178,41 @@
             </div>
         </div>
     </div>
-    <div class="homepage_second">
+    <div id="homepage_second" class="homepage_second">
         <h2 class="text-center pb-5">Choose Your Package</h2>
         <div class="container">
             <div class="row">
+                <?php
+                    if (mysqli_num_rows($sqlTour) > 0) {
+                        while($row_tour = mysqli_fetch_array($sqlTour)) {
+                        $tourId = $row_tour['Id'];
+                        $queryImage = "select Image from images WHERE TourId = $tourId";
+                        $sqlImage = mysqli_query($con, $queryImage);
+                        $row_image = mysqli_fetch_array($sqlImage);
+                ?>
                 <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
                     <div class="package-card">
                         <div class="package-thumb">
                             <a href="">
-                                <img class="package-img" src="../../../user/assets/img/homepage/package/pakage_1.png" alt="">
+                                <img class="package-img" src="<?php echo $row_image['Image'] ?>" alt="">
                             </a>
                             <p class="thumb-day">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
                                     <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
                                     <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
                                 </svg>
-                                <span>3 Day & 2 Night</span>
+                                <span><?php echo $row_tour['Day'] ?> Day & <?php echo $row_tour['Night'] ?> Night</span>
                             </p>
                         </div>
                         <div class="package-body">
                             <div class="body-content">
                                 <h3>
-                                    <a class="text-decoration-none text-dark fs-5" href="">Etiam placerat dictum consequat an Pellentesque habitant morbi.</a>
+                                    <a class="text-decoration-none text-dark fs-5" href=""><?php echo $row_tour['Title'] ?>.</a>
                                 </h3>
                             </div>
                             <div class="body-info">
                                 <div class="book-btn">
-                                    <a class="text-decoration-none" href="">BOOK NOW
+                                    <a class="text-decoration-none" href="<?php echo 'Tour_Detail.php?id='.$tourId ?>">BOOK NOW
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
                                         </svg>
@@ -155,35 +220,48 @@
                                 </div>
                                 <div class="body-price">
                                     <span class="from">From</span>
-                                    <h6>$79.00 <span class="person">Per Person</span></h6>
+                                    <h6>$<?php echo $row_tour['Price'] ?>.00 <span class="person">Per Person</span></h6>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <?php
+                        }
+                    }
+                    else {
+                        $defaultToursQuery = "select * from tour limit 6";
+                        $defaultToursSql = mysqli_query($con, $defaultToursQuery);
+                        if (mysqli_num_rows($defaultToursSql) > 0) {
+                            while ($row_default_tour = mysqli_fetch_array($defaultToursSql)) {
+                                $defaultTourId = $row_default_tour['Id'];
+                                $defaultQueryImage = "select Image from images WHERE TourId = $defaultTourId";
+                                $defaultSqlImage = mysqli_query($con, $defaultQueryImage);
+                                $row_default_image = mysqli_fetch_array($defaultSqlImage);
+                ?>
                 <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
                     <div class="package-card">
                         <div class="package-thumb">
                             <a href="">
-                                <img class="package-img" src="../../../user/assets/img/homepage/package/pakage_2.png" alt="">
+                                <img class="package-img" src="<?php echo $row_default_image['Image'] ?>" alt="">
                             </a>
                             <p class="thumb-day">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
                                     <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
                                     <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
                                 </svg>
-                                <span>5 Day & 6 Night</span>
+                                <span><?php echo $row_default_tour['Day'] ?> Day & <?php echo $row_default_tour['Night'] ?> Night</span>
                             </p>
                         </div>
                         <div class="package-body">
                             <div class="body-content">
                                 <h3>
-                                    <a class="text-decoration-none text-dark fs-5" href="">Etiam placerat dictum consequat an Pellentesque habitant morbi.</a>
+                                    <a class="text-decoration-none text-dark fs-5" href=""><?php echo $row_default_tour['Title'] ?>.</a>
                                 </h3>
                             </div>
                             <div class="body-info">
                                 <div class="book-btn">
-                                    <a class="text-decoration-none" href="">BOOK NOW
+                                    <a class="text-decoration-none" href="<?php echo 'Tour_Detail.php?id='.$tourId ?>">BOOK NOW
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
                                         </svg>
@@ -191,160 +269,23 @@
                                 </div>
                                 <div class="body-price">
                                     <span class="from">From</span>
-                                    <h6>$79.00 <span class="person">Per Person</span></h6>
+                                    <h6>$<?php echo $row_default_tour['Price'] ?>.00 <span class="person">Per Person</span></h6>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-                    <div class="package-card">
-                        <div class="package-thumb">
-                            <a href="">
-                                <img class="package-img" src="../../../user/assets/img/homepage/package/pakage_3.png" alt="">
-                            </a>
-                            <p class="thumb-day">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
-                                </svg>
-                                <span>4 Day & 3 Night</span>
-                            </p>
-                        </div>
-                        <div class="package-body">
-                            <div class="body-content">
-                                <h3>
-                                    <a class="text-decoration-none text-dark fs-5" href="">Etiam placerat dictum consequat an Pellentesque habitant morbi.</a>
-                                </h3>
-                            </div>
-                            <div class="body-info">
-                                <div class="book-btn">
-                                    <a class="text-decoration-none" href="">BOOK NOW
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                                <div class="body-price">
-                                    <span class="from">From</span>
-                                    <h6>$79.00 <span class="person">Per Person</span></h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-                    <div class="package-card">
-                        <div class="package-thumb">
-                            <a href="">
-                                <img class="package-img" src="../../../user/assets/img/homepage/package/pakage_4.png" alt="">
-                            </a>
-                            <p class="thumb-day">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
-                                </svg>
-                                <span>5 Day & 6 Night</span>
-                            </p>
-                        </div>
-                        <div class="package-body">
-                            <div class="body-content">
-                                <h3>
-                                    <a class="text-decoration-none text-dark fs-5" href="">Etiam placerat dictum consequat an Pellentesque habitant morbi.</a>
-                                </h3>
-                            </div>
-                            <div class="body-info">
-                                <div class="book-btn">
-                                    <a class="text-decoration-none" href="">BOOK NOW
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                                <div class="body-price">
-                                    <span class="from">From</span>
-                                    <h6>$79.00 <span class="person">Per Person</span></h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-                    <div class="package-card">
-                        <div class="package-thumb">
-                            <a href="">
-                                <img class="package-img" src="../../../user/assets/img/homepage/package/pakage_5.png" alt="">
-                            </a>
-                            <p class="thumb-day">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
-                                </svg>
-                                <span>4 Day & 3 Night</span>
-                            </p>
-                        </div>
-                        <div class="package-body">
-                            <div class="body-content">
-                                <h3>
-                                    <a class="text-decoration-none text-dark fs-5" href="">Etiam placerat dictum consequat an Pellentesque habitant morbi.</a>
-                                </h3>
-                            </div>
-                            <div class="body-info">
-                                <div class="book-btn">
-                                    <a class="text-decoration-none" href="">BOOK NOW
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                                <div class="body-price">
-                                    <span class="from">From</span>
-                                    <h6>$79.00 <span class="person">Per Person</span></h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-                    <div class="package-card">
-                        <div class="package-thumb">
-                            <a href="">
-                                <img class="package-img" src="../../../user/assets/img/homepage/package/pakage_6.png" alt="">
-                            </a>
-                            <p class="thumb-day">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
-                                </svg>
-                                <span>3 Day & 2 Night</span>
-                            </p>
-                        </div>
-                        <div class="package-body">
-                            <div class="body-content">
-                                <h3>
-                                    <a class="text-decoration-none text-dark fs-5" href="">Etiam placerat dictum consequat an Pellentesque habitant morbi.</a>
-                                </h3>
-                            </div>
-                            <div class="body-info">
-                                <div class="book-btn">
-                                    <a class="text-decoration-none" href="">BOOK NOW
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                                <div class="body-price">
-                                    <span class="from">From</span>
-                                    <h6>$79.00 <span class="person">Per Person</span></h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <?php
+                            }
+                        }
+                        echo "<script>alert('Xin lỗi, hiện tại chúng tôi không có Tour du lịch theo yêu cầu của bạn');
+                        </script>";
+                    }
+                ?>
             </div>
             <div class="row">
                 <div class="package-btn">
-                    <a class="btn-viewall text-decoration-none" href="">View All</a>
+                    <a id="viewAllTour" class="btn-viewall text-decoration-none" href="Tour.php">View All</a>
                 </div>
             </div>
         </div>
@@ -353,14 +294,17 @@
         <h2 class="text-center">Top Destination</h2>
         <div class="container">
             <div class="row">
+            <?php
+                    while($row_des = mysqli_fetch_array($sqlDes)) {
+                ?>
                 <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
                     <div class="top-card my-3">
                         <div class="top-thumb">
-                            <img src="../../../user/assets/img/homepage/top_destination/destination_1.png" alt="">
+                            <img src="<?php echo $row_des['Image'] ?>" alt="">
                         </div>
                         <div class="top-content">
                             <h4 class="content-title">
-                                <a class="text-white text-decoration-none" href="">Nuremberg</a>
+                                <a class="text-white text-decoration-none" href=""><?php echo $row_des['City'] ?></a>
                             </h4>
                             <div class="content-place text-white">
                                 <p><span>45</span> Place</p>
@@ -368,111 +312,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <div class="top-card my-3">
-                        <div class="top-thumb">
-                            <img src="../../../user/assets/img/homepage/top_destination/destination_2.png" alt="">
-                        </div>
-                        <div class="top-content">
-                            <h4 class="content-title">
-                                <a class="text-white text-decoration-none" href="">Bielefeld</a>
-                            </h4>
-                            <div class="content-place text-white">
-                                <p><span>45</span> Place</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <div class="top-card my-3">
-                        <div class="top-thumb">
-                            <img src="../../../user/assets/img/homepage/top_destination/destination_3.png" alt="">
-                        </div>
-                        <div class="top-content">
-                            <h4 class="content-title">
-                                <a class="text-white text-decoration-none" href="">Bielefeld</a>
-                            </h4>
-                            <div class="content-place text-white">
-                                <p><span>45</span> Place</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <div class="top-card my-3">
-                        <div class="top-thumb">
-                            <img src="../../../user/assets/img/homepage/top_destination/destination_4.png" alt="">
-                        </div>
-                        <div class="top-content">
-                            <h4 class="content-title">
-                                <a class="text-white text-decoration-none" href="">Augsburg</a>
-                            </h4>
-                            <div class="content-place text-white">
-                                <p><span>45</span> Place</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <div class="top-card my-3">
-                        <div class="top-thumb">
-                            <img src="../../../user/assets/img/homepage/top_destination/destination_5.png" alt="">
-                        </div>
-                        <div class="top-content">
-                            <h4 class="content-title">
-                                <a class="text-white text-decoration-none" href="">Chemnitz</a>
-                            </h4>
-                            <div class="content-place text-white">
-                                <p><span>45</span> Place</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <div class="top-card my-3">
-                        <div class="top-thumb">
-                            <img src="../../../user/assets/img/homepage/top_destination/destination_6.png" alt="">
-                        </div>
-                        <div class="top-content">
-                            <h4 class="content-title">
-                                <a class="text-white text-decoration-none" href="">Oberhausen</a>
-                            </h4>
-                            <div class="content-place text-white">
-                                <p><span>45</span> Place</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <div class="top-card my-3">
-                        <div class="top-thumb">
-                            <img src="../../../user/assets/img/homepage/top_destination/destination_7.png" alt="">
-                        </div>
-                        <div class="top-content">
-                            <h4 class="content-title">
-                                <a class="text-white text-decoration-none" href="">Oberhausen</a>
-                            </h4>
-                            <div class="content-place text-white">
-                                <p><span>45</span> Place</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <div class="top-card my-3">
-                        <div class="top-thumb">
-                            <img src="../../../user/assets/img/homepage/top_destination/destination_8.png" alt="">
-                        </div>
-                        <div class="top-content">
-                            <h4 class="content-title">
-                                <a class="text-white text-decoration-none" href="">Wiesbaden</a>
-                            </h4>
-                            <div class="content-place text-white">
-                                <p><span>45</span> Place</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <?php
+                    }
+                ?>
             </div>
         </div>
     </div>
@@ -510,35 +352,43 @@
     <div class="homepage_five">
         <h2 class="text-center">Choose Your Package</h2>
         <div class="offer-button text-center">
-            <button class="btn btn-10">10%</button>
-            <button class="btn btn-20">20%</button>
-            <button class="btn btn-30">30%</button>
+            <button class="btn btn-10" data-range="50">10%</button>
+            <button class="btn btn-20" data-range="51-100">20%</button>
+            <button class="btn btn-30" data-range="100-plus">30%</button>
         </div>
         <div class="container">
-            <div class="row">
+        <div id="packagedis" class="row">
+                <?php
+                    mysqli_data_seek($sqlTour, 0);
+                    while($row_tour = mysqli_fetch_array($sqlTour)) {
+                    $tourId = $row_tour['Id'];
+                    $queryImage = "select Image from images WHERE TourId = $tourId";
+                    $sqlImage = mysqli_query($con, $queryImage);
+                    $row_image = mysqli_fetch_array($sqlImage);
+                ?>
                 <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
                     <div class="package-card">
                         <div class="package-thumb">
                             <a href="">
-                                <img class="package-img" src="../../../user/assets/img/homepage/package/pakage_1.png" alt="">
+                                <img class="package-img" src="<?php echo $row_image['Image'] ?>" alt="">
                             </a>
                             <p class="thumb-day">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
                                     <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
                                     <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
                                 </svg>
-                                <span>3 Day & 2 Night</span>
+                                <span><?php echo $row_tour['Day'] ?> Day & <?php echo $row_tour['Night'] ?> Night</span>
                             </p>
                         </div>
                         <div class="package-body">
                             <div class="body-content">
                                 <h3>
-                                    <a class="text-decoration-none text-dark fs-5" href="">Etiam placerat dictum consequat an Pellentesque habitant morbi.</a>
+                                    <a class="text-decoration-none text-dark fs-5" href=""><?php echo $row_tour['Title'] ?>.</a>
                                 </h3>
                             </div>
                             <div class="body-info">
                                 <div class="book-btn">
-                                    <a class="text-decoration-none" href="">BOOK NOW
+                                    <a class="text-decoration-none" href="<?php echo 'Tour_Detail.php?id='.$tourId ?>">BOOK NOW
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
                                         </svg>
@@ -546,196 +396,19 @@
                                 </div>
                                 <div class="body-price">
                                     <span class="from">From</span>
-                                    <h6>$79.00 <span class="person">Per Person</span></h6>
+                                    <h6>$<?php echo $row_tour['Price'] ?>.00 <span class="person">Per Person</span></h6>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-                    <div class="package-card">
-                        <div class="package-thumb">
-                            <a href="">
-                                <img class="package-img" src="../../../user/assets/img/homepage/package/pakage_2.png" alt="">
-                            </a>
-                            <p class="thumb-day">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
-                                </svg>
-                                <span>5 Day & 6 Night</span>
-                            </p>
-                        </div>
-                        <div class="package-body">
-                            <div class="body-content">
-                                <h3>
-                                    <a class="text-decoration-none text-dark fs-5" href="">Etiam placerat dictum consequat an Pellentesque habitant morbi.</a>
-                                </h3>
-                            </div>
-                            <div class="body-info">
-                                <div class="book-btn">
-                                    <a class="text-decoration-none" href="">BOOK NOW
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                                <div class="body-price">
-                                    <span class="from">From</span>
-                                    <h6>$79.00 <span class="person">Per Person</span></h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-                    <div class="package-card">
-                        <div class="package-thumb">
-                            <a href="">
-                                <img class="package-img" src="../../../user/assets/img/homepage/package/pakage_3.png" alt="">
-                            </a>
-                            <p class="thumb-day">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
-                                </svg>
-                                <span>4 Day & 3 Night</span>
-                            </p>
-                        </div>
-                        <div class="package-body">
-                            <div class="body-content">
-                                <h3>
-                                    <a class="text-decoration-none text-dark fs-5" href="">Etiam placerat dictum consequat an Pellentesque habitant morbi.</a>
-                                </h3>
-                            </div>
-                            <div class="body-info">
-                                <div class="book-btn">
-                                    <a class="text-decoration-none" href="">BOOK NOW
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                                <div class="body-price">
-                                    <span class="from">From</span>
-                                    <h6>$79.00 <span class="person">Per Person</span></h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-                    <div class="package-card">
-                        <div class="package-thumb">
-                            <a href="">
-                                <img class="package-img" src="../../../user/assets/img/homepage/package/pakage_4.png" alt="">
-                            </a>
-                            <p class="thumb-day">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
-                                </svg>
-                                <span>5 Day & 6 Night</span>
-                            </p>
-                        </div>
-                        <div class="package-body">
-                            <div class="body-content">
-                                <h3>
-                                    <a class="text-decoration-none text-dark fs-5" href="">Etiam placerat dictum consequat an Pellentesque habitant morbi.</a>
-                                </h3>
-                            </div>
-                            <div class="body-info">
-                                <div class="book-btn">
-                                    <a class="text-decoration-none" href="">BOOK NOW
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                                <div class="body-price">
-                                    <span class="from">From</span>
-                                    <h6>$79.00 <span class="person">Per Person</span></h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-                    <div class="package-card">
-                        <div class="package-thumb">
-                            <a href="">
-                                <img class="package-img" src="../../../user/assets/img/homepage/package/pakage_5.png" alt="">
-                            </a>
-                            <p class="thumb-day">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
-                                </svg>
-                                <span>4 Day & 3 Night</span>
-                            </p>
-                        </div>
-                        <div class="package-body">
-                            <div class="body-content">
-                                <h3>
-                                    <a class="text-decoration-none text-dark fs-5" href="">Etiam placerat dictum consequat an Pellentesque habitant morbi.</a>
-                                </h3>
-                            </div>
-                            <div class="body-info">
-                                <div class="book-btn">
-                                    <a class="text-decoration-none" href="">BOOK NOW
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                                <div class="body-price">
-                                    <span class="from">From</span>
-                                    <h6>$79.00 <span class="person">Per Person</span></h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-                    <div class="package-card">
-                        <div class="package-thumb">
-                            <a href="">
-                                <img class="package-img" src="../../../user/assets/img/homepage/package/pakage_6.png" alt="">
-                            </a>
-                            <p class="thumb-day">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
-                                </svg>
-                                <span>3 Day & 2 Night</span>
-                            </p>
-                        </div>
-                        <div class="package-body">
-                            <div class="body-content">
-                                <h3>
-                                    <a class="text-decoration-none text-dark fs-5" href="">Etiam placerat dictum consequat an Pellentesque habitant morbi.</a>
-                                </h3>
-                            </div>
-                            <div class="body-info">
-                                <div class="book-btn">
-                                    <a class="text-decoration-none" href="">BOOK NOW
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                                <div class="body-price">
-                                    <span class="from">From</span>
-                                    <h6>$79.00 <span class="person">Per Person</span></h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <?php
+                    }
+                ?>
             </div>
             <div class="row">
                 <div class="package-btn">
-                    <a class="btn-viewalloffer text-decoration-none" href="">View All Offer</a>
+                    <a class="btn-viewalloffer text-decoration-none" href="Tour.php">View All Offer</a>
                 </div>
             </div>
         </div>
@@ -874,21 +547,33 @@
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-5 col-xl-5">
                     <div class="btn-viewall text-xl-end">
-                        <a class="text-decoration-none" href="">View All</a>
+                        <a class="text-decoration-none" href="Blogs.php">View All</a>
                     </div>
                 </div>
             </div>
             <div class="row">
+                <?php
+                    while($row_blog = mysqli_fetch_array($sqlBlog)) {
+                        $idBlog = $row_blog['Id'];
+                        $queryImg = "select Image from images WHERE BlogsId = $idBlog";
+                        $sqlImg = mysqli_query($con, $queryImg);
+                        $row_img = mysqli_fetch_array($sqlImg);
+
+                        $idEmp = $row_blog['EmployeeId'];
+                        $queryEmp = "select FullName from employees where id = $idEmp";
+                        $sqlEmp = mysqli_query($con, $queryEmp);
+                        $row_emp = mysqli_fetch_array($sqlEmp);
+                ?>
                 <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
                     <div class="blog-card">
                         <div class="blog-thumb">
                             <div class="card-thumb">
                                 <a href="">
-                                    <img src="../../../user/assets/img/homepage/blogs/blog-md-1.png" alt="">
+                                    <img src="<?php echo $row_img['Image'] ?>" alt="">
                                 </a>
                             </div>
                             <div class="card-type">
-                                <a class="text-decoration-none text-white fw-bold" href="">Tour</a>
+                                <a class="text-decoration-none text-white fw-bold" href=""><?php echo $row_blog['Description'] ?></a>
                             </div>
                         </div>
                         <div class="blog-content">
@@ -898,92 +583,26 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
                                             <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
                                             <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-                                        </svg> <span>By John Smith</span>
+                                        </svg> <span><?php echo $row_emp['FullName'] ?></span>
                                     </a>
                                     <a class="user-date text-decoration-none" href="">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
                                             <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
                                             <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-                                        </svg> November 16, 2021
+                                        </svg> <?php echo date('F d, Y', strtotime($row_blog['DateCreate'])); ?>
+                                        
                                     </a>
                                 </div>
                                 <h4 class="title">
-                                    <a class="text-decoration-none text-dark" href="">vitae tempor convallis, mi ligula an suscipit nunc, ornare suscipit.</a>
+                                    <a class="text-decoration-none text-dark" href=""><?php echo $row_blog['Title'] ?>.</a>
                                 </h4>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
-                    <div class="blog-card">
-                        <div class="blog-thumb">
-                            <div class="card-thumb">
-                                <a href="">
-                                    <img src="../../../user/assets/img/homepage/blogs/blog-md-2.png" alt="">
-                                </a>
-                            </div>
-                            <div class="card-type">
-                                <a class="text-decoration-none text-white fw-bold" href="">Travel</a>
-                            </div>
-                        </div>
-                        <div class="blog-content">
-                            <div class="content-info">
-                                <div class="info-user">
-                                    <a class="user-icon text-decoration-none" href="">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
-                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-                                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-                                        </svg> <span>By John Smith</span>
-                                    </a>
-                                    <a class="user-date text-decoration-none" href="">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
-                                            <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
-                                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-                                        </svg> November 16, 2021
-                                    </a>
-                                </div>
-                                <h4 class="title">
-                                    <a class="text-decoration-none text-dark" href="">vitae tempor convallis, mi ligula an suscipit nunc, ornare suscipit.</a>
-                                </h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
-                    <div class="blog-card">
-                        <div class="blog-thumb">
-                            <div class="card-thumb">
-                                <a href="">
-                                    <img src="../../../user/assets/img/homepage/blogs/blog-md-3.png" alt="">
-                                </a>
-                            </div>
-                            <div class="card-type">
-                                <a class="text-decoration-none text-white fw-bold" href="">Guide</a>
-                            </div>
-                        </div>
-                        <div class="blog-content">
-                            <div class="content-info">
-                                <div class="info-user">
-                                    <a class="user-icon text-decoration-none" href="">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
-                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-                                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-                                        </svg> <span>By John Smith</span>
-                                    </a>
-                                    <a class="user-date text-decoration-none" href="">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
-                                            <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
-                                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-                                        </svg> November 16, 2021
-                                    </a>
-                                </div>
-                                <h4 class="title">
-                                    <a class="text-decoration-none text-dark" href="">vitae tempor convallis, mi ligula an suscipit nunc, ornare suscipit.</a>
-                                </h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <?php
+                    }
+                ?>
             </div>
         </div>
     </div>
@@ -1054,5 +673,56 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        // Xử lí Choose packega
+        $('.btn').click(function() {
+            $('.btn').css({
+            'height': '60px',
+            'width': '60px',
+            'font-size': '20px',
+            'color': '#ff4838',
+            'background': 'white',
+            'border': '2px solid #ff4838',
+            });
+
+            $(this).css({
+                'height': '87px',
+                'width': '87px',
+                'font-size': '28px',
+                'color': '#fff',
+                'background': '#ff4838',
+                'border': '2px solid #ff4838',
+            })
+
+            var priceRange = $(this).data("range");
+
+            $.ajax({
+                url: "package.php",
+                type: "POST",
+                data: { priceRange: priceRange },
+                success: function(data) {
+                    $("#packagedis").html(data);
+                },
+                error: function() {
+                    console.log("Lỗi khi tải các tour");
+                }
+            });
+        })
+        
+        $('searchForm').submit(function (event) {
+            var city = $('select[name="city"]').val();
+            var tourtype = $('select[name="tourtype"]').val();
+            // var person = $('select[name="person"]').val();
+            var date = $('input[name="date"]').val();
+
+            if (city === "" || tourtype === "" || date === "") {
+                event.preventDefault();
+                alert('Vui lòng nhập đầy đủ thông tin.');
+            }
+
+    });
+</script>
 
 <?php require('includes/footer.html'); ?>

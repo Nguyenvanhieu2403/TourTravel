@@ -53,7 +53,7 @@
                 <a href="Blog_Detail.php?id=<?php echo $row_blog['Id']; ?>">
                     <div class="blog-item" id="<?php echo $row_blog['Id'] ?>">
                         <div class="blog-item-img">
-                            <img src="../../../user/assets/img/blogs/<?php echo $row_blog['image'] ?>" alt="" class="hover-zoom">
+                            <img src="../assets/img/blogs/<?php echo $row_blog['image'] ?>" alt="" class="hover-zoom">
                         </div>
                         <div class="blog-item-content">
                             <a href="#" class="blog-item-writer">

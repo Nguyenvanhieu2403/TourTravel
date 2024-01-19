@@ -5,28 +5,42 @@
     if (isset($_GET['search']) && isset($_GET['tourtype'])) {
         $search = $_GET['search'];
         $tourtype = $_GET['tourtype'];
-        $tours = Tour::Search($search, $tourtype,1);
+        $tours = Tour::Search($search, $tourtype,0);
     } 
     else if (isset($_GET['search'])) {
         $search = $_GET['search'];
-        $tours = Tour::Search($search, null,1);
+        $tours = Tour::Search($search, null,0);
     } 
     else if (isset($_GET['tourtype'])) {
         $tourtype = $_GET['tourtype'];
-        $tours = Tour::Search(null, $tourtype,1);
+        $tours = Tour::Search(null, $tourtype,0);
     }else {
-        $tours = Tour::GetAll(1);
+        $tours = Tour::GetAll(0);
     }
 
-    if (isset($_GET['lock'])) {
-        $id = $_GET['lock'];
-        $result = Tour::CancelTour($id, 0);
+    if (isset($_GET['Unlock'])) {
+        $id = $_GET['Unlock'];
+        $result = Tour::CancelTour($id,1);
         if ($result) {
             echo "<script>alert('Lock tour successfully!')</script>";
+            echo "<script>window.location.href = 'DeleteTour.php';</script>";
         } else {
             echo "<script>alert('Lock tour failed!')</script>";
+            echo "<script>window.location.href = 'DeleteTour.php';</script>";
         }
-        header("Location: ManagerTours.php");
+        header("Location: DeleteTour.php");
+    }
+
+    if(isset($_GET['delete'])){
+        $id = $_GET['delete'];
+        $result = Tour::DeleteTour($id);
+        if ($result) {
+            echo "<script>alert('Delete tour successfully!')</script>";
+            echo "<script>window.location.href = 'DeleteTour.php';</script>";
+        } else {
+            echo "<script>alert('Delete tour failed!')</script>";
+            echo "<script>window.location.href = 'DeleteTour.php';</script>";
+        }
     }
 
     $tourType = Tour::GetAllTourType();
@@ -106,9 +120,9 @@
                                         ?>
                                     </td>
                                     <td class="managerTour--icon__delete">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" id="<?php echo $tour->Id; ?>" fill="currentColor" class="bi bi-arrow-repeat managerTour_update" viewBox="0 0 16 16">
-                                            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"/>
-                                            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" id="<?php echo $tour->Id; ?>" fill="currentColor" class="bi bi-arrow-clockwise managerTour_update" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
                                         </svg>
                                         <svg xmlns="http://www.w3.org/2000/svg" id="<?php echo $tour->Id; ?>" width="20" height="20" fill="currentColor" class="bi bi-trash3-fill managerTour_remove" viewBox="0 0 16 16">
                                             <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
@@ -137,26 +151,28 @@
                 event.preventDefault();
                 var search = $("input[type='search']").val();
                 if (search.trim() !== "" && TourType.trim() !== "") {
-                    window.location.href = "ManagerTours.php?search=" + encodeURIComponent(search) + "&tourtype=" + encodeURIComponent(TourType);
+                    window.location.href = "DeleteTour.php?search=" + encodeURIComponent(search) + "&tourtype=" + encodeURIComponent(TourType);
                 } else if (search.trim() !== "") {
-                    window.location.href = "ManagerTours.php?search=" + encodeURIComponent(search);
+                    window.location.href = "DeleteTour.php?search=" + encodeURIComponent(search);
                 } else if (TourType.trim() !== "") {
-                    window.location.href = "ManagerTours.php?tourtype=" + encodeURIComponent(TourType);
+                    window.location.href = "DeleteTour.php?tourtype=" + encodeURIComponent(TourType);
                 } else {
-                    window.location.href = "ManagerTours.php";
+                    window.location.href = "DeleteTour.php";
                 }
             });
 
             $(".managerTour_remove").click(function () {
                 var id = $(this).attr("id");
-                if (confirm("Are you sure you want to stop running this tour business?")) {
-                    window.location.href = "ManagerTours.php?lock=" + encodeURIComponent(id);
+                if (confirm("Are you sure you want to delete this tour?")) {
+                    window.location.href = "DeleteTour.php?delete=" + encodeURIComponent(id);
                 }
             });
 
             $(".managerTour_update").click(function () {
                 var id = $(this).attr("id");
-                window.location.href = "UpdateTourDetail.php?id=" + encodeURIComponent(id);
+                if (confirm("Are you sure you want to continue running this tour business?")) {
+                    window.location.href = "DeleteTour.php?Unlock=" + encodeURIComponent(id);
+                }
             });
         });
 

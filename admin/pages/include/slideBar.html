@@ -7,10 +7,10 @@
             <li class="feature-item active feature-item-dashboard">
                 <a href="#">
                     <svg class="ant-menu-item-icon" width="24" height="24" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; stroke: rgb(90, 91, 94); fill: rgb(90, 91, 94); cursor: pointer;"><path d="M938.667 465.067v-290.133c0-64-27.307-89.6-95.147-89.6h-172.373c-67.84 0-95.147 25.6-95.147 89.6v290.133c0 64 27.307 89.6 95.147 89.6h172.373c67.84 0 95.147-25.6 95.147-89.6z" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="4" stroke-width="68.26666666666667"></path><path d="M938.667 849.067v-76.8c0-64-27.307-89.6-95.147-89.6h-172.373c-67.84 0-95.147 25.6-95.147 89.6v76.8c0 64 27.307 89.6 95.147 89.6h172.373c67.84 0 95.147-25.6 95.147-89.6z" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="4" stroke-width="68.26666666666667"></path><path d="M448 558.933v290.133c0 64-27.307 89.6-95.147 89.6h-172.373c-67.84 0-95.147-25.6-95.147-89.6v-290.133c0-64 27.307-89.6 95.147-89.6h172.373c67.84 0 95.147 25.6 95.147 89.6z" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="4" stroke-width="68.26666666666667"></path><path d="M448 174.933v76.8c0 64-27.307 89.6-95.147 89.6h-172.373c-67.84 0-95.147-25.6-95.147-89.6v-76.8c0-64 27.307-89.6 95.147-89.6h172.373c67.84 0 95.147 25.6 95.147 89.6z" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="4" stroke-width="68.26666666666667"></path></svg>
-                    <span>Dashboard</span>
+                    <span class="dash">Dashboard</span>
                 </a>
             </li>
-            <li class="feature-item" data-bs-toggle="dropdown">
+            <li class="feature-item">
                 <a href="#">
                     <svg class="" width="24" height="24" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; stroke: rgb(90, 91, 94); fill: rgb(90, 91, 94); cursor: pointer;"><path d="M938.667 341.333v213.333c0 170.667-85.333 256-256 256h-21.333c-13.227 0-26.027 6.4-34.133 17.067l-64 85.333c-28.16 37.547-74.24 37.547-102.4 0l-64-85.333c-6.827-9.387-22.613-17.067-34.133-17.067h-21.333c-170.667 0-256-42.667-256-256v-213.333c0-170.667 85.333-256 256-256h170.667" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="10" stroke-width="68.26666666666667"></path><path d="M648.533 197.075c-14.080-42.24 2.56-94.293 48.64-108.8 23.893-7.253 53.76-1.28 70.827 21.333 16.213-23.467 46.933-28.587 70.827-21.333 46.080 14.080 62.72 66.56 48.64 108.8-21.76 66.987-98.133 101.547-119.467 101.547s-96.853-34.133-119.467-101.547z" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="4" stroke-width="68.26666666666667"></path><path d="M682.513 469.333h0.387" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="4" stroke-width="85.33333333333333"></path><path d="M511.807 469.333h0.383" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="4" stroke-width="85.33333333333333"></path><path d="M341.099 469.333h0.383" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="4" stroke-width="85.33333333333333"></path></svg>
                     <span>Manager customer</span>
@@ -18,11 +18,11 @@
                 </a>
                 
                 <ul class="child-feature feature-time-request list-unstyled">
-                    <li><a class="" href="#">Awaiting Confirmation</a></li>
-                    <li><a class="" href="#">Confirmed and Paid</a></li>
-                    <li><a class="" href="#">Traveling</a></li>
-                    <li><a class="" href="#">Traveled</a></li>
-                    <li><a class="" href="#">Cancelled Tour</a></li>
+                    <li><a class="await" href="ManagerCustomer.php">Awaiting Confirmation</a></li>
+                    <li><a class="confirm" href="ConfirmCustomer.php">Confirmed and Paid</a></li>
+                    <li><a class="traveling" href="TravelingCustomer.php">Traveling</a></li>
+                    <li><a class="traveled" href="TraveledCustomer.php">Traveled</a></li>
+                    <li><a class="cancel" href="CancelCustomer.php">Cancelled Tour</a></li>
                 </ul>
             </li>
             <li class="feature-item">
@@ -46,8 +46,8 @@
                 
                 <ul class="child-feature feature-time-log list-unstyled">
                     <li><a class="" href="ManagerTours.php">Tour List</a></li>
-                    <li><a class="" href="#">Add Tour</a></li>
-                    <li><a class="" href="#">Update Tour</a></li>
+                    <li><a class="" href="ManagerTOurDetail.php">Add Tour</a></li>
+                    <li><a href="DeleteTour.php">Canceled Tour</a></li>
                 </ul>
             </li>
             <li class="feature-item">

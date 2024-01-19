@@ -104,7 +104,7 @@
                     </a>
                 </div>
                 <div class="blog-detail-img">
-                    <img src="../assets/img/blogs_detail/<?php echo $row_blogDetail['Image']?>" alt="">
+                    <img src="../../../user/assets/img/blogs_detail/<?php echo $row_blogDetail['image']?>" alt="">
                 </div>
                 <div class="blog-detail-text">
                     <p>

@@ -68,8 +68,8 @@
                                 <th>Email</th>
                                 <th>Phone Number</th>
                                 <th>Status</th>
-                                <th>Person locked</th>
-                                <th>Date locked</th>
+                                <th>Position</th>
+                                <th>Date Create</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -95,8 +95,16 @@
                                             }
                                         ?>
                                     </td>
-                                    <td><?php echo $account->ModifyBy; ?></td>
-                                    <td><?php echo $account->ModifyDate; ?></td>
+                                    <td><?php echo $account->Position; ?></td>
+                                    <td>
+                                        <?php 
+                                        if($account->CreateDate != null)  {
+                                            $dateTime = new DateTime($account->CreateDate);
+                                            $formattedDate = $dateTime->format('d-m-Y');
+                                            echo $formattedDate;
+                                        }
+                                        ?>
+                                    </td>
                                 </tr>
                             <?php $count++; endforeach; ?>
                         </tbody>

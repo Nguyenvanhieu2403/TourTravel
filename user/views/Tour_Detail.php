@@ -7,7 +7,7 @@
 <?php
     if(isset($_GET['id'])) {
         $id = $_GET['id'];
-        $query = "select td.*, i.Image as Image, t.City as City, t.Price as Price  from tourdetail td join images i on td.Id = i.TourDetailId join tour t on t.id = td.TourId where i.Status = 1 and td.TourId = $id";
+        $query = "select distinct td.*, i.Image as Image, t.City as City, t.Price as Price  from tourdetail td join images i on td.Id = i.TourDetailId join tour t on t.id = td.TourId where i.Status = 1 and td.TourId = $id";
 	    $sql_tourDetail = mysqli_query($con,$query); 
 
         $queryTravelPlan = "SELECT tp.* FROM travelplan tp join tourdetail td on tp.TourDetailId = td.Id WHERE td.TourId = $id";
@@ -502,7 +502,7 @@
                     <h3 class="widget-lavel">$<?php echo $row_tourDetail['Price'] ?> <span>Per Person</span></h3>
                 </div>
                 <div class="widget-body tour__detail--navbar__form">
-                    <form action="#" method="post" id="booking-form">
+                    <form action="" method="post" id="booking-form">
                         <div class="booking-form-wrapper">
                             <div class="custom-input-group row">
                                 <input type="text" placeholder="Your Full Name" id="name" name="fullNameBook">
@@ -632,6 +632,66 @@
 </div>
 
 <?php 
+    // Xử lý  booking
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["fullNameBook"])) {
+        // // Lấy dữ liệu từ form book
+        $fullName = $_POST["fullNameBook"];
+        $email = $_POST["emailBook"];
+        $phone = $_POST["phoneBook"];
+        $ticketType = $_POST["ticketTypeBook"];
+        $adult = $_POST["Adult"];
+        $child = $_POST["Child"];
+        $message = $_POST["messageBook"];
+        $date = $_POST['checkIn'];
+        $dateCreate = gmdate("Y-m-d");
+        $status = 1;
+
+        // Khởi tạo biến để kiểm tra trạng thái giao dịch
+        // $transactionStatus = true;
+
+
+        // Thực hiện truy vấn insert
+        $sql = $con->prepare("insert into users(fullname, phonenumber, email, tickettype, adult, child, dateofdepartment, message, status) values ( ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        
+        $sql->bind_param("ssssiissi", $fullName, $phone, $email, $ticketType, $adult, $child, $date, $message, $status);
+        if( $sql->execute() ) {
+            $userId = $sql->insert_id;
+
+            $sqlBook = $con->prepare("insert into books (iduser, idtour, createdate, createby, status) values (?, ?, ?, ?, ?)");
+            $sqlBook->bind_param("iisii", $userId, $id, $dateCreate, $userId, $status);
+            $sqlBook->execute();
+            echo '<script>alert("Book successfully");</script>';
+        };
+        $sql->close();
+        $sqlBook->close();
+        $con->close();
+    }
+?>
+
+<?php 
+    // Xử lý comment
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["fullName"])) {
+        // Lấy dừ liệu từ form comment
+        $fullNameComment = $_POST["fullName"];
+        $emailComment = $_POST["email"];
+        $tourTypeComment = $_POST["tourType"];
+        $messageComment = $_POST["message"];
+        $ratingComment = $_POST["rating"];
+        $dateCreateComment = gmdate("Y-m-d H:i:s");
+        $statusComment = 1;
+
+        $sqlComment = $con->prepare("insert into comments(idtour, fullname, email, tourtype, message, rate, status, datecreate) values (?, ?, ?, ?, ?, ?, ?, ?)");
+        $sqlComment->bind_param("issssiis", $id, $fullNameComment, $emailComment, $tourTypeComment, $messageComment, $ratingComment, $statusComment, $dateCreateComment);
+        if( $sqlComment->execute()) {
+            echo '<script>alert("Comment successfully");</script>';
+            echo '<script>window.location.href = window.location.href;</script>';
+            exit();
+        }
+        $sql_Comment->close();
+    }
+?>
+
+<!-- <?php 
     // Xử lý comment
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Lấy dữ liệu từ form
@@ -652,17 +712,40 @@
         $con->close();
         if ($sql) {
             echo '<script>alert("Comment successfully");</script>';
-            echo '<script>window.location.href = window.location.href;</script>';
-            exit();
-            // echo '<script>window.location.href = "Tour_Detail.php?id='.$id.'";</script>';
+            echo '<script>window.location.href = "Tour_Detail.php?id='.$id.'";</script>';
             exit();
         } else {
             echo '<script>alert("Error: ' . $con->error . '");</script>';
         }
     }
-?>
+?> -->
 
-<?php 
+
+<script>
+    $(document).ready(function() {
+        $("#viewAllComments").click(function() {
+            $("[id^=tour__detail--showhide]").toggleClass("hidden");
+            var isHidden = $("[id^=tour__detail--showhide]").hasClass("hidden");
+            
+            // Đặt lại nội dung dựa trên trạng thái của lớp "hidden"
+            $(this).text(isHidden ?  "View All Comments" : "Hidden Less Comments" );
+        });
+    });
+
+    // $(document).ready(function() {
+    //     // Bắt sự kiện click vào nút Send Message
+    //     $("button.col-md-3").click(function() {
+    //         // Thực hiện các hành động khi nút được click
+    //         alert("Nút Send Message đã được click!");
+    //         // Thêm các hành động khác tùy ý ở đây
+    //     });
+    // });
+
+</script>
+
+<?php require('includes/footer.html'); ?>
+
+<!-- <?php 
     // Xử lý  booking
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Lấy dữ liệu từ form
@@ -750,4 +833,4 @@
 
 </script>
 
-<?php require('includes/footer.html'); ?>
+<?php require('includes/footer.html'); ?> -->

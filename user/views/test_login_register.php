@@ -10,7 +10,7 @@ session_start();
 </head>
 <body>
     <h1>Hello Minh dep zai</h1>
-    <?php 
+    <?php
         if (isset($_SESSION['idDepartment'])) {
             echo $_SESSION['idDepartment'];
             

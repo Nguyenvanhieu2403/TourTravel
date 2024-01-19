@@ -4,8 +4,8 @@
             ini_set("display_errors",1);
             $servername = 'localhost';
             $username = 'root';
-            $password = 'Nobisuke.8888';
-            $databasename = 'travel';
+            $password = 'Abc@123456789';
+            $databasename = 'tourtravel';
             $conn = new mysqli($servername, $username, $password, $databasename);
         
             if($conn->connect_error){
@@ -17,9 +17,10 @@
         }
     }
 
-    $con = mysqli_connect("localhost","root","Nobisuke.8888","travel");
-    // Check connection
-    if (mysqli_connect_errno())
+    $con = mysqli_connect("localhost","root","Abc@123456789","tourtravel");
+
+  // Check connection
+  if (mysqli_connect_errno())
     {
     echo "Failed to connect to MySQL: " . mysqli_connect_error();
     }

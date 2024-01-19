@@ -664,6 +664,10 @@ ol,ul {
   display: block;
 }
 
+.navbar .nav-item .nav-link.active {
+  color: #ff4838;
+}
+
 /* -- navbar -- */
 
 /* homepage */
@@ -1145,15 +1149,16 @@ ol,ul {
   font-weight: 700;
 }
 
-.homepage_five .offer-button .btn-10 {
+/* .homepage_five .offer-button .btn-10 {
   height: 87px;
   width: 87px;
   font-size: 28px;
   color: #fff;
   background: #ff4838;
   border: 2px solid #ff4838;
-}
+} */
 
+.homepage_five .offer-button .btn-10,
 .homepage_five .offer-button .btn-20,
 .homepage_five .offer-button .btn-30 {
   height: 60px;

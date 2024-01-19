@@ -4,10 +4,15 @@
     $customers;
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search']) ) {
         $search = $_POST['search'];
-        $customers = Customer::Search($search, 1, '');
+        $customers = Customer::Search($search, 1, ' NOT ');
     }
     else {
         $customers = Customer::GetAllWait();
+    }
+    session_start();
+    $userId = "";
+    if(isset($_SESSION["id"])) {
+        $userId = $_SESSION["id"];
     }
 ?>
 <body>

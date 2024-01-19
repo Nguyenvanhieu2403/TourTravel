@@ -4,7 +4,7 @@
     $customers;
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search']) ) {
         $search = $_POST['search'];
-        $customers = Customer::Search($search, 0, '');
+        $customers = Customer::Search($search, 0, );
     }
     else {
         $customers = Customer::GetAllCancel();

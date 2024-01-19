@@ -39,6 +39,8 @@
                 $passwordEncode = $row['Password'];
                 $idEmployee = $row['Id'];
                 $status = $row['Status'];
+                $id = $row['Id'];
+                $_SESSION['id'] = $id;
                 if(!empty( $row['idDepartment'])){
                     $_SESSION['idDepartment'] = $row['idDepartment'];
                 }
@@ -52,11 +54,13 @@
                         $hour = time() + 3600 * 24 * 30;
                         setcookie('username', $nameAccount, $hour);
                         setcookie('IdUser', $idEmployee, $hour);
+                        setcookie('id', $id, $hour);
                         // setcookie('password', $passwordAdmin, $hour);
                     }
                     else {
                         setcookie('username', '', time() - 3600); 
                         setcookie('IdUser', '', time() - 3600);
+                        setcookie('id', '', time() - 3600); 
                         // setcookie('password', '', time() - 3600);
                     }
                     if($status == 0){
@@ -65,7 +69,7 @@
                     else if($status == 1){
                         header("Location: dashBoard.php"); // Wait to approve
                     }
-                    else if($status == 2 ){
+                    else if($status == 2){
                         echo "Đăng nhập thành công";
                         header("Location: dashBoard.php"); // Change to home page (admin)
                     }

@@ -4,10 +4,15 @@
     $customers;
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
         $search = $_POST['search'];
-        $customers = Customer::Search($search, 2, 'NOT');
+        $customers = Customer::Search($search, 2, );
     }
     else {
         $customers = Customer::GetAllConfirm();
+    }
+    session_start();
+    $userId = "";
+    if(isset($_SESSION["id"])) {
+        $userId = $_SESSION["id"];
     }
 ?>
 <body>
@@ -70,18 +75,7 @@
                                     <td><?php echo $customer->TourName; ?></td>
                                     <td><?php echo $customer->DateCreate; ?></td>
                                     <td><?php echo $customer->Confirm; ?></td>
-                                    <td class="action">
-                                        <a class="text-decoration-none" href="">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg mx-3" viewBox="0 0 16 16">
-                                                <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
-                                            </svg>
-                                        </a>
-                                        <a class="text-decoration-none" href="cancelCustomer.php?idCustomer=<?php echo $customer->Id; ?>" onclick="return confirm('Do you want to delete ?')">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg mx-3" viewBox="0 0 16 16">
-                                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-                                            </svg>
-                                        </a>
-                                    </td>
+                                    <td><?php echo $customer->FullNameEmployee; ?></td>
                                 </tr>
                             <?php $count++; endforeach; ?>
                         </tbody>

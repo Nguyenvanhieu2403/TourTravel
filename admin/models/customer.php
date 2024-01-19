@@ -21,8 +21,9 @@ class Customer {
     public $Confirm;
     public $DepartureTime;
     public $ReturnTime;
+    public $FullNameEmployee;
 
-    public function __construct($id, $fullname, $phonenumber, $email, $tickettype, $adult, $child, $dateofdepartment, $message, $status, $tourname, $tourtype, $datecreate, $price, $description, $confirm, $departuretime, $returntime) {
+    public function __construct($id, $fullname, $phonenumber, $email, $tickettype, $adult, $child, $dateofdepartment, $message, $status, $tourname, $tourtype, $datecreate, $price, $description, $confirm, $departuretime, $returntime, $fullnameEmployee) {
         $this->Id = $id;
         $this->FullName = $fullname;
         $this->PhoneNumber = $phonenumber;
@@ -41,6 +42,7 @@ class Customer {
         $this->Confirm = $confirm;
         $this->DepartureTime = $departuretime;
         $this->ReturnTime = $returntime;
+        $this->FullNameEmployee = $fullnameEmployee;
     }
     
     public static function GetAllWait() {
@@ -65,7 +67,9 @@ class Customer {
         b.CreateDate as DateCreate,
         b.Confirm,
         td.DepartureTime,
-        td.ReturnTime
+        td.ReturnTime,
+        b.idEmployee,
+        e.FullName as FullNameEmployee
         FROM
           books b
         JOIN
@@ -73,7 +77,9 @@ class Customer {
         JOIN
           tourdetail td ON b.IdTour = td.TourId
         JOIN
-          tour t ON td.TourId = t.Id where b.Status=1
+          tour t ON td.TourId = t.Id
+        LEFT JOIN
+          employees e ON b.idEmployee = e.Id where b.Status=1
         ORDER BY
           b.CreateDate ASC";
         $result = $conn->query($sql);
@@ -97,7 +103,8 @@ class Customer {
                 $row['Description'],
                 $row['Confirm'],
                 $row['DepartureTime'],
-                $row['ReturnTime']
+                $row['ReturnTime'],
+                $row['FullNameEmployee']
             );
         }
 
@@ -105,7 +112,7 @@ class Customer {
         return $dsCustomers;
     }
 
-    public static function Search($search ,$status, $not) {
+    public static function Search($search ,$status) {
       $dsCustomers = array();
       $conn = DBConnection::Connect();
 
@@ -127,7 +134,9 @@ class Customer {
         b.CreateDate as DateCreate,
         b.Confirm,
         td.DepartureTime,
-        td.ReturnTime
+        td.ReturnTime,
+        b.idEmployee,
+        e.FullName as FullNameEmployee
       FROM
           books b
       JOIN
@@ -136,6 +145,8 @@ class Customer {
           tourdetail td ON b.IdTour = td.TourId
       JOIN
           tour t ON td.TourId = t.Id
+      LEFT JOIN
+          employees e ON b.idEmployee = e.Id
       WHERE
           b.Status = $status
           AND (
@@ -143,8 +154,7 @@ class Customer {
               OR td.Name LIKE '%$search%'
               OR t.TourType LIKE '%$search%'
               OR b.CreateDate LIKE '%$search%'
-          )
-          AND (NOW() $not BETWEEN td.DepartureTime AND td.ReturnTime)";
+          )";
       $result = $conn->query($sql);
         
       while($row = $result->fetch_assoc()) {
@@ -166,7 +176,8 @@ class Customer {
             $row['Description'],
             $row['Confirm'],
             $row['DepartureTime'],
-            $row['ReturnTime']
+            $row['ReturnTime'],
+            $row['FullNameEmployee']
         );
     }
 
@@ -188,8 +199,8 @@ class Customer {
       td.DepartureTime,
       td.ReturnTime,
       b.Confirm,
-      td.DepartureTime,
-      td.ReturnTime
+      b.idEmployee,
+      e.FullName as FullNameEmployee
       FROM
         books b
       JOIN
@@ -197,8 +208,10 @@ class Customer {
       JOIN
         tourdetail td ON b.IdTour = td.TourId
       JOIN
-        tour t ON td.TourId = t.Id where b.Status=2
-      and (NOW() NOT BETWEEN td.DepartureTime AND td.ReturnTime)
+        tour t ON td.TourId = t.Id
+      LEFT JOIN
+        employees e ON b.idEmployee = e.Id where b.Status=2
+      and ( td.DepartureTime > NOW() )
       ORDER BY
         b.CreateDate ASC";
       $result = $conn->query($sql);
@@ -221,7 +234,8 @@ class Customer {
               $row['Description'],
               $row['Confirm'],
               $row['DepartureTime'],
-              $row['ReturnTime']
+              $row['ReturnTime'],
+              $row['FullNameEmployee']
           );
       }
 
@@ -243,8 +257,8 @@ class Customer {
       td.DepartureTime,
       td.ReturnTime,
       b.Confirm,
-      td.DepartureTime,
-      td.ReturnTime
+      b.idEmployee,
+      e.FullName as FullNameEmployee
       FROM
         books b
       JOIN
@@ -252,7 +266,9 @@ class Customer {
       JOIN
         tourdetail td ON b.IdTour = td.TourId
       JOIN
-        tour t ON td.TourId = t.Id where b.Status=2
+        tour t ON td.TourId = t.Id
+      LEFT JOIN
+        employees e ON b.idEmployee = e.Id where b.Status=2
       and (NOW() BETWEEN td.DepartureTime AND td.ReturnTime)
       ORDER BY
         b.CreateDate ASC";
@@ -277,7 +293,8 @@ class Customer {
               $row['Description'],
               $row['Confirm'],
               $row['DepartureTime'],
-              $row['ReturnTime']
+              $row['ReturnTime'],
+              $row['FullNameEmployee']
           );
       }
 
@@ -299,8 +316,8 @@ class Customer {
       td.DepartureTime,
       td.ReturnTime,
       b.Confirm,
-      td.DepartureTime,
-      td.ReturnTime
+      b.idEmployee,
+      e.FullName as FullNameEmployee
       FROM
         books b
       JOIN
@@ -308,7 +325,9 @@ class Customer {
       JOIN
         tourdetail td ON b.IdTour = td.TourId
       JOIN
-        tour t ON td.TourId = t.Id where b.Status=0
+        tour t ON td.TourId = t.Id
+      LEFT JOIN
+        employees e ON b.idEmployee = e.Id where b.Status=0
       ORDER BY
         b.CreateDate ASC";
       $result = $conn->query($sql);
@@ -332,7 +351,8 @@ class Customer {
               $row['Description'],
               $row['Confirm'],
               $row['DepartureTime'],
-              $row['ReturnTime']
+              $row['ReturnTime'],
+              $row['FullNameEmployee']
           );
       }
 
@@ -354,8 +374,8 @@ class Customer {
       td.DepartureTime,
       td.ReturnTime,
       b.Confirm,
-      td.DepartureTime,
-      td.ReturnTime
+      b.idEmployee,
+      e.FullName as FullNameEmployee
       FROM
         books b
       JOIN
@@ -363,7 +383,9 @@ class Customer {
       JOIN
         tourdetail td ON b.IdTour = td.TourId
       JOIN
-        tour t ON td.TourId = t.Id where b.Status=2
+        tour t ON td.TourId = t.Id
+      LEFT JOIN
+        employees e ON b.idEmployee = e.Id where b.Status=2
       and (NOW() > td.ReturnTime)
       ORDER BY
         b.CreateDate ASC";
@@ -388,7 +410,8 @@ class Customer {
               $row['Description'],
               $row['Confirm'],
               $row['DepartureTime'],
-              $row['ReturnTime']
+              $row['ReturnTime'],
+              $row['FullNameEmployee']
           );
       }
 

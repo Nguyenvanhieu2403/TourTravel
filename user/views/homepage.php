@@ -555,7 +555,7 @@
                 <?php
                     while($row_blog = mysqli_fetch_array($sqlBlog)) {
                         $idBlog = $row_blog['Id'];
-                        $queryImg = "select Image from images WHERE BlogsId = $idBlog";
+                        $queryImg = "select image from Blogs WHERE Id = $idBlog";
                         $sqlImg = mysqli_query($con, $queryImg);
                         $row_img = mysqli_fetch_array($sqlImg);
 
@@ -569,7 +569,7 @@
                         <div class="blog-thumb">
                             <div class="card-thumb">
                                 <a href="">
-                                    <img src="<?php echo $row_img['Image'] ?>" alt="">
+                                    <img src="../../../user/assets/img/blogs/<?php echo $row_img['image'] ?>" alt="">
                                 </a>
                             </div>
                             <div class="card-type">
@@ -721,7 +721,7 @@
                 event.preventDefault();
                 alert('Vui lòng nhập đầy đủ thông tin.');
             }
-
+        });
     });
 </script>
 

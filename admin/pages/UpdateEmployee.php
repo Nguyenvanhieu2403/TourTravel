@@ -8,14 +8,15 @@
 <?php                                    
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['searchEmployeeButton'])){
         $nameEmployee = $_POST['searchEmployee'];
-        $listEmployees = Employee::searchEmployeeWithouDept($nameEmployee);
+        $listEmployees = Employee::searchEmployeeWithDept($nameEmployee);
     }
     else{
-        $listEmployees = Employee::getEmployeesWithoutDept();
+        $idDepartment = $_SESSION['idDepartment'];
+        $listEmployees = Employee::getEmployeeInDepartment($idDepartment);
     }
 ?>
 
-<!-- Confirm function -->
+<!-- Delete function -->
 <?php 
 
 ?>
@@ -60,8 +61,6 @@
                                 </thead>
                                     <tbody>
                                         <?php    
-                                            
-
                                             foreach ($listEmployees as $item) {
                                         ?>
                                    
@@ -71,8 +70,8 @@
                                             <td><?php echo "0". $item->get_phoneNumber() ?></td>
                                             <td><?php echo $item->get_email() ?></td>
                                             <td class="text-center align-middle">
-                                                <a href="#" class="confirm-employee-trigger " title="Confirm employee to your department">
-                                                    <i class="fa-solid fa-circle-plus confirm-employee-icon"></i>
+                                                <a href="#" class="delete-employee-trigger" title="Delete employee from your department">
+                                                    <i class="fa-solid fa-circle-xmark confirm-employee-icon"></i>
                                                 </a>
                                             </td> 
                                         </tr>
@@ -90,6 +89,7 @@
                                         $profileEmployee = Employee::getEmployeeById($idEmployee);   
                                     echo '
                                     <div class="detail-employee">
+                                       
                                         <div class="row border bg-white container-detail-employee">
                                             <div class="close-profile position-absolute end-0">
                                                 <i class="fa-solid fa-xmark"></i>
@@ -148,6 +148,24 @@
                                                         <hr>
                                                         <div class="row">
                                                             <div class="col-sm-3">
+                                                                <p class="mb-0">Department</p>
+                                                            </div>
+                                                            <div class="col-sm-9">
+                                                                <p class="text-muted mb-0">'. $profileEmployee->get_department() .'</p>
+                                                            </div>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="row">
+                                                            <div class="col-sm-3">
+                                                                <p class="mb-0">Position</p>
+                                                            </div>
+                                                            <div class="col-sm-9">
+                                                                '. (!empty($profileEmployee->get_position()) ? '<input type="text" name="position" id="position" value="' . $profileEmployee->get_position() . '">' : '<input type="text" name="position" id="position">') .'
+                                                            </div>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="row">
+                                                            <div class="col-sm-3">
                                                                 <p class="mb-0">Email</p>
                                                             </div>
                                                             <div class="col-sm-9">
@@ -173,8 +191,14 @@
                                                             </div>
                                                         </div>
                                                         <hr>
+                                                        
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <input type="hidden" name="updateEmployeeId" value="' . $idEmployee . '">
+                                            <div class="d-flex justify-content-end group-btn-delete-em">
+                                                <button type="submit" name="btnUpdateEmployeeButton" id="btnUpdateEmployeeButton" class="me-3 ">Update</button>
+                                                <button class="close-confirm me-3" >Cancel</button>
                                             </div>
                                         </div>
                                     </div>
@@ -182,9 +206,45 @@
                                     }
                                     ;?>
                             </div>
-                   
-                            <div class="confirm-employee-form col-md-6 position-absolute top-40 start-50 translate-middle text-center bg-white">
-                                <div class="close-confirm close-confirm-icon position-absolute top-0 end-0">
+                            
+                            <!-- Confirm update form -->
+                            <div class="update-employee-form col-md-6 position-absolute top-40 start-50 translate-middle text-center bg-white p-5">
+                                <div class="close-confirm position-absolute top-0 end-0 m-3">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </div>
+                                <?php 
+                                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['btnUpdateEmployeeButton'])){
+                                    $idEmployee = isset($_REQUEST['employeeId']) ? $_REQUEST['employeeId'] : '';
+                                    $idDepartment = $_SESSION['idDepartment'];
+                                    $position = isset($_POST['position']) ? $_POST['position'] : '';
+                                    
+                                    if(!empty($idEmployee)){
+                                        $fullName = Employee::getEmployeeById($idEmployee)->get_name();
+
+                                        echo '<span>Confirm update for '.$fullName.'</span>';
+                                        echo '<br><div class="group-btn-confirm d-flex justify-content-center mt-5 ">
+                                                <form method="post"> 
+                                                    <input type="hidden" name="updateEmployeeId" value="' . $idEmployee . '">
+                                                    <input type="hidden" name="position" value="' . $position . '">
+                                                    <button type="submit" name="updateEmployeeButton" id="confirmUpdateEmployeeButton">OK</button>
+                                                </form>
+                                                <button class="close-confirm">Cancel</button>
+                                            </div>';
+                                    }
+                                }
+
+                                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['updateEmployeeButton'])){
+                                    $idEmployee = isset($_POST['updateEmployeeId']) ? $_POST['updateEmployeeId'] : '';
+                                    $position = isset($_POST['position']) ? $_POST['position'] : '';
+                                    $updateProfileEmployee = Employee::updateEmployee($idEmployee, $position);
+                                }
+                                ?> 
+                            </div>
+
+
+                            <!-- Delete form -->
+                            <div class="delete-employee-form col-md-6 position-absolute top-40 start-50 translate-middle text-center bg-white p-5">
+                                <div class="close-confirm position-absolute top-0 end-0 m-3">
                                     <i class="fa-solid fa-xmark"></i>
                                 </div>
                                 <?php 
@@ -194,26 +254,25 @@
                                     if(!empty($idEmployee)){
                                         $profileEmployee = Employee::getEmployeeById($idEmployee);
                                         $fullName = $profileEmployee->get_name();
-                                        echo ' <span>Do you want '.$fullName.' become your employee ?</span>';
+                                        echo ' <span>Do you want to delete '.$fullName.' from your department ?</span>';
                                         echo '<br><div class="group-btn-confirm d-flex justify-content-center mt-5">
-                                                <form method="post">
-                                                    <input type="hidden" name="confirmEmployeeId" value="' . $idEmployee . '">
-                                                    <input type="hidden" name="confirmDepartmentId" value="' . $idDepartment . '">
-                                                    <button type="submit" name="confirmEmployeeButton" id="confirmEmployeeButton">OK</button>
+                                                <form method="post"> 
+                                                    <input type="hidden" name="deleteEmployeeId" value="' . $idEmployee . '">
+                                                    <button type="submit" name="deleteEmployeeButton" id="deleteEmployeeButton" class="close-confirm">OK</button>
                                                 </form>
-                                                <button class="close-confirm ">Cancel</button>
+                                                <button class="close-confirm">Cancel</button>
                                             </div>';
                                     }
-                                    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['confirmEmployeeButton'])){
-                                        $idEmployee = $_POST['confirmEmployeeId'];
-                                        $idDepartment = $_POST['confirmDepartmentId'];
-                                        $confirmAction = Employee::confirmEmployee($idEmployee,$idDepartment);
-                                        if($confirmAction){
-                                            echo "Thêm nhân viên thành công";
+
+                                    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteEmployeeButton'])){
+                                        $idEmployee = $_POST['deleteEmployeeId'];
+                                        $deleteEmployee = Employee::deleteEmployee($idEmployee);
+                                        if($deleteEmployee !== false){
+                                            echo "Xóa nhân viên thành công";
                                             echo '<script>location.reload();</script>';
                                         }
                                         else{
-                                            echo "Thêm nhân viên thất bại";
+                                            echo "Xóa nhân viên thất bại";
                                         }
                                     }
                                 ?> 
@@ -247,10 +306,16 @@
             $('.detail-employee').hide();
         }
 
-        if (localStorage.getItem('displayConfirmEmployee') === 'true') {
-            $('.confirm-employee-form').show();
+        if (localStorage.getItem('displayDeleteEmployee') === 'true') {
+            $('.delete-employee-form').show();
         } else {
-            $('.confirm-employee-form').hide();
+            $('.delete-employee-form').hide();
+        }
+
+        if (localStorage.getItem('displayUpdateEmployee') === 'true') {
+            $('.update-employee-form').show();
+        } else {
+            $('.update-employee-form').hide();
         }
 
         // Display detail information employee
@@ -268,26 +333,45 @@
             localStorage.setItem('displayEmployeeForm', 'false');
         }); 
         
-        // Display confirm form employee
-        $('.confirm-employee-trigger').click(function(e) {
+        // Display delete form employee
+        $('.delete-employee-trigger').click(function(e) {
             e.stopPropagation(); 
             var employeeId = $(this).closest('.employee-row').find('.idEmployee').text();
             $('#employeeForm input[name="employeeId"]').val(employeeId);
             localStorage.setItem('overlayVisible', 'true');
-            localStorage.setItem('displayConfirmEmployee', 'true');
+            localStorage.setItem('displayDeleteEmployee', 'true');
             $('#employeeForm').submit(); 
         });
 
-        $('#confirmEmployeeButton').click(function(e){
-            localStorage.setItem('overlayVisible', 'false');
-            localStorage.setItem('displayConfirmEmployee', 'false');
-        })
         $('.close-confirm').click(function () {
-            $('.confirm-employee-form').hide();
+            $('.delete-employee-form').hide();
             $('.overlay').hide();
             localStorage.setItem('overlayVisible', 'false');
-            localStorage.setItem('displayConfirmEmployee', 'false');
+            localStorage.setItem('displayDeleteEmployee', 'false');
         }); 
-        
+
+        // Display update employee form
+        $('#btnUpdateEmployeeButton').click(function(e) {
+            e.stopPropagation(); 
+            
+            var employeeId = $('#employeeForm input[name="updateEmployeeId"]').val();
+            $('#employeeForm input[name="employeeId"]').val(employeeId);
+            localStorage.setItem('displayUpdateEmployee', 'true');
+            localStorage.setItem('displayEmployeeForm', 'false');
+            $('#employeeForm').submit(); 
+        });
+
+        $('.close-confirm').click(function () {
+            $('.update-employee-form').hide();
+            $('.overlay').hide();
+            localStorage.setItem('overlayVisible', 'false');
+            localStorage.setItem('displayUpdateEmployee', 'false');
+        }); 
+
+        $('#confirmUpdateEmployeeButton').click(function(e){
+            localStorage.setItem('overlayVisible', 'false');
+            localStorage.setItem('displayUpdateEmployee', 'false');
+        })
+
     })
 </script>

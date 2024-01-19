@@ -116,7 +116,7 @@
     <?php require(__DIR__. '\\include\\libraryJs-Links.html')?>
     <script src="../../../admin/assets/js/header.js"></script> 
     <script src="../../../admin/assets/js/slideBar.js"></script>
-<!-- HieuNv -->
+
     <script>
         $(document).ready(function () {
             var postionSearch = ""; 

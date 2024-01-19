@@ -5,17 +5,17 @@
     if (isset($_GET['search']) && isset($_GET['tourtype'])) {
         $search = $_GET['search'];
         $tourtype = $_GET['tourtype'];
-        $tours = Tour::Search($search, $tourtype);
+        $tours = Tour::Search($search, $tourtype,1);
     } 
     else if (isset($_GET['search'])) {
         $search = $_GET['search'];
-        $tours = Tour::Search($search, null);
+        $tours = Tour::Search($search, null,1);
     } 
     else if (isset($_GET['tourtype'])) {
         $tourtype = $_GET['tourtype'];
-        $tours = Tour::Search(null, $tourtype);
+        $tours = Tour::Search(null, $tourtype, 1);
     }else {
-        $tours = Tour::GetAll();
+        $tours = Tour::GetAll(1);
     }
 
     if (isset($_GET['lock'])) {

@@ -151,7 +151,7 @@
             $conn = DbConnection::Connect();
             $sql = 'SELECT e.*, d.name AS nameDepartment
                     FROM employees e
-                    LEFT JOIN department d ON e.idDepartment = d.id
+                    LEFT JOIN departments d ON e.idDepartment = d.id
                     WHERE e.id = ?';
             $stmt = $conn->prepare($sql);
             $stmt->bind_param('i',$idEmployee);

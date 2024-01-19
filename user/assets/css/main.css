@@ -407,24 +407,6 @@ h1 {
 .blog-detail-post-item:hover .blog-detail-post-heading{
   color: #ff4838;
 }
-.blog-detail-comment-content{
-  width: 100%;
-}
-
-.blog-detail-form-rate {
-  display: flex;
-  gap: 5px;
-}
-
-.fa-regular.fa-star.filled {
-  color: #0a0302;
-  cursor: pointer;
-}
-.icon-unrating,
-.icon-rating{
-  color: #ff4838;
-  margin-left: 5px;
-}
 
 /* End blog detail */
 

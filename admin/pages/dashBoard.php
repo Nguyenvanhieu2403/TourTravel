@@ -1,7 +1,4 @@
 <?php require(__DIR__. '\\include\\header-Links.html')?>
-<?php 
-    session_start();
-?>
 <body>
     <div class="test row m-0">
         <?php require('include/slideBar.html')?>

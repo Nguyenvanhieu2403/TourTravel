@@ -65,7 +65,7 @@
                     else if($status == 1){
                         header("Location: dashBoard.php"); // Wait to approve
                     }
-                    else if($status == 2 ){
+                    else if($status == 2){
                         echo "Đăng nhập thành công";
                         header("Location: dashBoard.php"); // Change to home page (admin)
                     }

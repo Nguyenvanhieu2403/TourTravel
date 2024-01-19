@@ -4,7 +4,7 @@
             ini_set("display_errors",1);
             $servername = 'localhost';
             $username = 'root';
-            $password = 'provipxop';
+            $password = 'Abc@123456789';
             $databasename = 'tourtravel';
             $conn = new mysqli($servername, $username, $password, $databasename);
         
@@ -17,7 +17,7 @@
         }
     }
 
-    $con = mysqli_connect("localhost","root","provipxop","tourtravel");
+    $con = mysqli_connect("localhost","root","Abc@123456789","tourtravel");
 
   // Check connection
   if (mysqli_connect_errno())

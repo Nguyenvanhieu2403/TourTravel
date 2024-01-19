@@ -140,7 +140,7 @@
     padding: 5px 5px 5px 15px;
 }
 .header-account-infor li:hover{
-    background-color: rgba(255, 72, 56,0.5);
+    background-color: rgba(60, 109, 115,0.5);
 }
 
 /* End header */
@@ -184,16 +184,9 @@
     padding: 30px 0;
     border-radius: 10px;
 }
-.group-btn-delete-em button{
-  color: #fff;
-  background-color: var(--primary--color);
-  border: none;
-  padding: 5px 10px;
-  border-radius: 10px;
-}
 .close-confirm,
 .close-profile{
-    width: 70px;
+    width: 50px;
     padding: 5px 0;
     text-align: center;
     background-color: var(--primary--color);
@@ -201,7 +194,7 @@
     color: #fff;
     top: 5px;
 }
-.close-confirm-icon{
+.close-confirm{
     margin: 10px;
 }
 .close-profile:hover{
@@ -228,61 +221,7 @@
     z-index: 100000;   
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
-.employeeForm thead th{
-  background-color: var(--primary--color);
-}
-.container-confirm-employee thead th{
-  background-color: var(--primary--color);
-  color: #e4e3e3;
-}
-.confirm-employee-total{
-  padding: 66px 20px 0 0;
-}
-.confirm-employee-search input{
-  height: 100%;
-  width: 100%;
-  background: #f5f5f5;
-  border-radius: 44px 0 0 44px;
-  padding: 10px 15px;
-  border: none;
-  outline: none;
-}
-.confirm-employee-search button{
-  border: none;
-  font-weight: 700;
-  font-size: 14px;
-  color: #fff;
-  background: #ff4838;
-  padding-left: 20px;
-  padding-right: 20px;
-  border-radius: 0 44px 44px 0;
-  margin-left: -1px;
-  transition: .3s;
-}
-.group-btn-confirm button{
-  border: none;
-  background-color: var(--primary--color);
-  border-radius: 5px;
-  color: #fff;
-  margin-right: 30px;
-  width: 100px;
-  height: 40px;
-}
-.confirm-employee-search button:hover,
-.group-btn-confirm button:hover{
-  background-color: #fff;
-  color: var(--primary--color);
-  border: 1px solid var(--primary--color);
-  transition: .3s;
-}
-.delete-employee-form,
-.update-employee-form{
-  z-index: 100000; 
-}
-.delete-employee-form,
-.update-employee-form{
-  border-radius: 10px;
-}
+
 /* End Emplyee Manager */
 
 
@@ -614,56 +553,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     font-weight: bold;
 }
   /* End Account Unlock */
-  
-  /* Start report */
-  .report-revenue,
-  .report-chart{
-    margin-top: 80px;
-  }
-  .block-report{
-    width: 96%;
-    border: 1px solid #cccbce;
-    border-radius: 20px;
-    height: 150px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  }
-  .block-report span{
-    color: var(--primary--color);
-    font-weight: 800;
-  }
-  .report-month,
-  .report-quarter{
-    width: 25%;
-    margin-right: 35px;
-  }
-
-  .report-month form,
-  .report-quarter form{
-    width: 100%;
-  }
-
-  .report-month select,
-  .report-quarter select{
-    width: 100%;
-  }
-  .title-report{
-    font-weight: 700;
-  }
-  .report-form{
-    margin-top: 20px;
-  }
-  .report-form select{
-    height: 40px;
-    color: #6e6b7b;
-    border: 1px solid #d9d9d9;
-    border-radius: 5px;
-    padding-left: 10px;
-  }
-  .report-form select:hover{
-    border: 1px solid var(--primary--color);
-    transition: border 0.3s ease;
-  }
-  /* End report */
 
 
   /* Start Manager Tour */

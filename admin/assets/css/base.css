@@ -16,7 +16,6 @@ html{
     line-height: 1.6rem; /*16px*/
     font-family: 'Roboto', sans-serif;
     box-sizing: border-box;
-    justify-content: space-around;
 }
 body{
     margin: 0;

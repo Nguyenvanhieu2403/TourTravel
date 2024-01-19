@@ -23,19 +23,14 @@
 <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $idBlog = $_GET['id'];
+        $name = $_POST["name"];
+        $email = $_POST["email"];
+        $message = $_POST["message"];
+        $dateCreate = date("Y-m-d H:i:s");
 
-        // Kiểm tra và gán giá trị cho các biến
-        $name = isset($_POST["name"]) ? $_POST["name"] : '';
-        $email = isset($_POST["email"]) ? $_POST["email"] : '';
-        $message = isset($_POST["message"]) ? $_POST["message"] : '';
-        $rating = isset($_POST["rating"]) ? $_POST["rating"] : '';
-
-        // Kiểm tra xem các biến có giá trị hay không
-        if (!empty($name) && !empty($email) && !empty($message) && !empty($rating)) {
-            $insertQuery = "INSERT INTO comments (IdBlog, FullName, Email, Message, Rate, Status, DateCreate)
-                            VALUES ('$idBlog', '$name', '$email', '$message', $rating, 1, NOW())";
-            mysqli_query($con, $insertQuery);
-        }
+        $insertQuery = "INSERT INTO comments (IdBlog, FullName, Email, Message, Rate, Status, DateCreate)
+                        VALUES ('$idBlog', '$name', '$email', '$message', 1, 1, '$dateCreate')";
+        mysqli_query($con, $insertQuery);
     }
 ?>
 <!-- Load comment -->
@@ -47,34 +42,28 @@
     $detailComment = mysqli_query($con, $query);
 ?>
 
+
 <!-- Load detail blog -->
 <?php
-    $query = "";
-    //  Search blog 
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search'])){
-        $searchBlog = $_POST['title'];
+    if (isset($_GET['id'])) {
         $idBlog = $_GET['id'];
         $query = "SELECT blogs.*, employees.FullName, comments.IdBlog, (SELECT COUNT(*) FROM comments WHERE comments.IdBlog = blogs.Id) AS totalcomment
         FROM blogs 
-        left JOIN employees  ON blogs.EmployeeId = employees.Id 
-        left JOIN comments ON blogs.Id = comments.IdBlog 
-        where blogs.Title  LIKE '%$searchBlog%' GROUP BY blogs.Id limit 1;";
+        INNER JOIN employees  ON blogs.EmployeeId = employees.Id 
+        left  JOIN comments ON blogs.Id = comments.IdBlog 
+        where blogs.Id = $idBlog GROUP BY blogs.Id;";
+        
+        $sql_blogDetail= mysqli_query($con,$query); 
+    } else {
+        echo "Không có id được cung cấp.";
     }
-    else {
-        $idBlog = $_GET['id'];
-        $query = "SELECT blogs.*, employees.FullName, comments.IdBlog, (SELECT COUNT(*) FROM comments WHERE comments.IdBlog = blogs.Id) AS totalcomment
-        FROM blogs 
-        left JOIN employees  ON blogs.EmployeeId = employees.Id 
-        left JOIN comments ON blogs.Id = comments.IdBlog 
-        where blogs.Id = $idBlog GROUP BY blogs.Id limit 1;";
-    }
-    $sql_blogDetail= mysqli_query($con,$query); 
 ?>
 
 <?php
     if(mysqli_num_rows($sql_blogDetail) > 0) {
         while ($row_blogDetail = mysqli_fetch_array($sql_blogDetail)) {
 ?>
+
 <div class="container blog-detail-container">
     <div class="row pt-5">
         <div class="col-md-8 blog-detail-left-side">
@@ -82,8 +71,7 @@
                 <h2><?php echo $row_blogDetail['Title'] ?></h2>
             </div>
             <div class="blog-detail-content">
-                
-                <div class="blog-detail-post d-flex my-3">
+<div class="blog-detail-post d-flex my-3">
                     <a href="#">
                         <div class="blog-detail-post-author">
                             <i class="fa-solid fa-circle-user blog-item-icon"></i>
@@ -104,87 +92,70 @@
                     </a>
                 </div>
                 <div class="blog-detail-img">
-                    <img src="../../../user/assets/img/blogs_detail/<?php echo $row_blogDetail['image']?>" alt="">
+                    <img src="../../../user/assets/img/blogs/<?php echo $row_blogDetail['image']?>" alt="">
                 </div>
                 <div class="blog-detail-text">
                     <p>
                        <?php echo $row_blogDetail['Description']?>
                     </p>
                 </div>
-                <div class="blog-detail-comment" id="commentSection">
-                    <div class="blog-detail-comment-list">
-                        <div class="blog-detail-comment-heading my-3">
-                            <h3>Comment <span>(<?php echo $row_blogDetail['totalcomment']?>)</span></h3>
-                        </div>
-                        <?php
-                            if (mysqli_num_rows($detailComment) > 0) {
-                                $commentCount = 0;
-                                while ($row_comment = mysqli_fetch_array($detailComment)) {
-                                    if ($commentCount < 3) {
-                        ?>
-                        <div class="blog-detail-comment-item my-4 d-flex">
-                            <div class="blog-detail-comment-img me-4">
-                                <img src="../assets/img/comment/comment-user-1.png" alt="">
-                            </div>
-                            <div class="blog-detail-comment-content">
-                                <div class="blog-detail-comment-post d-flex justify-content-between">
-                                    <div class="blog-detail-post-left">
-                                        <div class="blog-detail-comment-name">
-                                            <h6><?php echo $row_comment['FullName'] ?></h6>
-                                        </div>
-                                        <div class="blog-detail-comment-date">
-                                            <span><?php 
-                                                $timestamp = strtotime($row_comment['DateCreate']);
-                                                echo date('j F, Y h.iA', $timestamp);
-                                            ?></span>
-                                        </div>
-                                    </div>
-                                    <div class="blog-detail-post-right">
-                                        <div class="blog-detail-comment-rate">
-                                            <?php
-                                                $rating = $row_comment['Rate'] ?? 0;
-                                                $filledStars = str_repeat('<i class="fa-solid fa-star icon-rating"></i>', $rating);
-                                                $emptyStars = str_repeat('<i class="fa-regular icon-unrating fa-star"></i>', 5 - $rating);
-                                                echo $filledStars . $emptyStars;
-                                            ?>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                                <div class="blog-detail-comment-text">
-                                    <p><?php echo $row_comment['Message'] ?></p>
-                                </div>
-                                <div class="blog-detail-reply-btn">
-                                    <a href="#">
-                                        <i class="fa-solid fa-reply-all"></i>
-                                        Reply
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <?php
-                                    $commentCount++;
-                                    }
-                                    else {
-                                        $hiddenComments[] = $row_comment;
-                                    }
-                                }
-                            }
-                        ?>
-    
-
-                        <?php
-                            if (!empty($hiddenComments)) {
-                                echo '<script>var hiddenComments = ' . json_encode($hiddenComments) . ';</script>';
-                            }
-                        ?>
+                <div class="blog-detail-comment">
+                    <div class="blog-detail-comment-heading my-3">
+                        <h3>Comment <span>(<?php echo $row_blogDetail['totalcomment']?>)</span></h3>
                     </div>
-
-                    <div class="comment-btn text-center" id="commentLinksContainer">
-                        <?php if (mysqli_num_rows($detailComment) > 3) { ?>
-                            <a href="javascript:void(0);" id="viewAllComments">View All Comment</a>
-                            <a href="javascript:void(0);" id="hideComments">Hide Comments</a>
-                        <?php } ?>
+                    <?php
+                        if (mysqli_num_rows($detailComment) > 0) {
+                            while ($row_comment = mysqli_fetch_array($detailComment)) {
+                    ?>
+                    <div class="blog-detail-comment-item my-4 d-flex">
+                        <div class="blog-detail-comment-img me-4">
+                            <img src="../assets/img/comment/comment-user-1.png" alt="">
+                        </div>
+                        <div class="blog-detail-comment-content">
+                            <div class="blog-detail-comment-post d-flex justify-content-between">
+                                <div class="blog-detail-post-left">
+                                    <div class="blog-detail-comment-name">
+                                        <h6><?php echo $row_comment['FullName'] ?></h6>
+                                    </div>
+                                    <div class="blog-detail-comment-date">
+                                        <span><?php 
+                                            $timestamp = strtotime($row_comment['DateCreate']);
+                                            echo date('j F, Y h.iA', $timestamp);
+                                        ?></span>
+                                    </div>
+                                </div>
+<div class="blog-detail-post-right">
+                                    <div class="blog-detail-comment-rate">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="blog-detail-comment-text">
+                                <p><?php echo $row_comment['Message'] ?></p>
+                            </div>
+                            <div class="blog-detail-reply-btn">
+                                <a href="#">
+                                    <i class="fa-solid fa-reply-all"></i>
+                                    Reply
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
+                        }
+                    ?>
+                    <?php
+                    } else {
+                        echo "";
+                    }
+                    ?>
+                    <div class="comment-btn text-center">
+                        <a href="#">View All Comment</a>
                     </div>
                 </div>
                 <div class="blog-detail-leave-comment">
@@ -210,7 +181,7 @@
                                         </div>
                                     </div>
                                     <div class="blog-detail-form-message">
-                                        <textarea name="message" name="message" cols="30" rows="10" placeholder="Your message"></textarea>
+<textarea name="message" name="message" cols="30" rows="10" placeholder="Your message"></textarea>
                                     </div>
                                     <div class="blog-detail-form-rate my-5" id="ratingStars">
                                         <?php
@@ -219,7 +190,6 @@
                                                 echo '<i class="fa-regular fa-star' . ($i <= $rating ? ' filled' : '') . '" data-rating="' . $i . '"></i>';
                                             }
                                         ?>
-                                        <input type="hidden" name="rating" value="<?php echo $rating; ?>">
                                     </div>
                                     <div class="blog-detail-form-button">
                                         <button type="submit">Send Message</button>
@@ -231,8 +201,7 @@
                 </div>
             </div>
         </div>
-        <!-- Search function -->
-        
+
         <div class="col-md-4 blog-detail-right-side">
             <div class="blog-detail-search">
                 <div class="blog-detail-search-heading my-2">
@@ -240,8 +209,8 @@
                 </div>
                 <form action="" method="post" id="" class="mt-5">
                     <div class="blog-detail-search-group d-flex">
-                        <input type="search" name="title" placeholder="Your Blog">
-                        <button type="submit" name="search">SEARCH</button>
+                        <input type="search" placeholder="Your Blog">
+                        <button type="submit">SEARCH</button>
                     </div>
                 </form>
             </div>
@@ -274,7 +243,7 @@
                                 <i class="fa-solid fa-angles-right"></i>
                                 Group Tour
                             </h6>
-                            <span>(09)</span>
+<span>(09)</span>
                         </a>
                     </li>
                     <li>
@@ -331,7 +300,7 @@
                                 <p class="m-0">Map where your photos were taken and discover local points.</p>
                             </div>
                             <div class="blog-detail-post-group d-flex">
-                                <div class="blog-detail-post-writer">
+<div class="blog-detail-post-writer">
                                     <i class="fa-solid fa-circle-user blog-item-icon"></i>
                                     <span> By John Smith</span>
                                 </div>
@@ -380,7 +349,7 @@
                                     <span>Novembar 16, 2021</span>
                                 </div>
                             </div>
-                        </div>
+</div>
                     </li>
                     <li class="blog-detail-post-item my-4 d-flex">
                         <div class="blog-detail-post-img flex-1">
@@ -445,7 +414,7 @@
                                 <img src="../assets/img/blogs_detail/blog-md-1.png" alt="">
                             </a>
                         </li>
-                        <li>
+<li>
                             <a href="">
                                 <img src="../assets/img/blogs_detail/blog-md-1.png" alt="">
                             </a>
@@ -469,84 +438,24 @@
         echo "<h1>Không có dữ liệu</h1>";
     }
 ?>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
-    // Fill star
     $(document).ready(function () {
         $("#ratingStars i").click(function () {
             var clickedRating = $(this).data("rating");
+            
+            // Change all stars to regular (empty) stars
             $("#ratingStars i").removeClass("filled").removeClass("fa-solid").addClass("fa-regular");
+
+            // Change stars up to the clicked one to solid stars
             for (var i = 1; i <= clickedRating; i++) {
                 $("#ratingStars i[data-rating='" + i + "']").addClass("filled").addClass("fa-solid").removeClass("fa-regular");
             }
+
+            // Set the selected rating in a hidden input field (optional)
             $("input[name='rating']").val(clickedRating);
         });
     });
-
-    // Display all comments
-    $(document).ready(function () {
-        var commentSection = $("#commentSection");
-        $('#hideComments').hide();
-
-        $("#viewAllComments").on("click", function () {
-            var listComments = $(".blog-detail-comment-list");
-            if (typeof hiddenComments !== 'undefined' && hiddenComments.length > 0) {
-                $.each(hiddenComments, function (index, comment) { // comment is mean each element in hiddenComments
-                    var commentItem = $("<div>").addClass("blog-detail-comment-item hide-comment my-4 d-flex");
-                    var htmlContent = `
-                        <div class="blog-detail-comment-img me-4">
-                            <img src="../assets/img/comment/comment-user-1.png" alt="">
-                        </div>
-                        <div class="blog-detail-comment-content">
-                            <div class="blog-detail-comment-post d-flex justify-content-between">
-                                <div class="blog-detail-post-left">
-                                    <div class="blog-detail-comment-name">
-                                        <h6>${comment['FullName']}</h6>
-                                    </div>
-                                    <div class="blog-detail-comment-date">
-                                        <span>${new Date(comment['DateCreate']).toLocaleString()}</span>
-                                    </div>
-                                </div>
-                                <div class="blog-detail-post-right">
-                                    <div class="blog-detail-comment-rate" data-rating="${comment['Rate']}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="blog-detail-comment-text">
-                                <p>${comment['Message']}</p>
-                            </div>
-                            <div class="blog-detail-reply-btn">
-                                <a href="#">
-                                    <i class="fa-solid fa-reply-all"></i>
-                                    Reply
-                                </a>
-                            </div>
-                        </div>`;
-
-                    commentItem.hide().html(htmlContent);
-                    listComments.append(commentItem);
-
-                    var ratingContainer = commentItem.find(".blog-detail-comment-rate");
-                    var filledStars = '<i class="fa-solid fa-star icon-rating"></i>'.repeat(comment['Rate']);
-                    var emptyStars = '<i class="fa-regular icon-unrating fa-star"></i>'.repeat(5 - comment['Rate']);
-                    ratingContainer.html(filledStars + emptyStars);
-
-                    commentItem.fadeIn();
-                });
-                $(".hide-comment").show();
-                $("#viewAllComments").hide();
-                $("#hideComments").show();
-            }
-        });
-    });
-
-    // Hide comment
-    $(document).ready(function () {
-    $('#hideComments').on('click', function () {
-        $('.hide-comment').addClass('d-none');
-        $("#viewAllComments").show();
-        $(this).hide();
-    });
-});
 </script>
+
+
 <?php require('includes/footer.html'); ?>

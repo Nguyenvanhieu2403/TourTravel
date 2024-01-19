@@ -53,7 +53,7 @@
                 <a href="Blog_Detail.php?id=<?php echo $row_blog['Id']; ?>">
                     <div class="blog-item" id="<?php echo $row_blog['Id'] ?>">
                         <div class="blog-item-img">
-                            <img src="../../../user/assets/img/blogs/<?php echo $row_blog['image'] ?>" alt="" class="hover-zoom">
+                            <img src="../../../user/assets/img/blogs/<?php echo $row_blog['Image'] ?>" alt="" class="hover-zoom">
                         </div>
                         <div class="blog-item-content">
                             <a href="#" class="blog-item-writer">
@@ -72,9 +72,9 @@
                         <div class="blog-item-title">
                             <p> <?php echo $row_blog['Title'] ?></p>
                         </div>
-                        <div class="blog-travle">
+                        <!-- <div class="blog-travle">
                             <a href="#">Tourist</a>
-                        </div>
+                        </div> -->
                     </div>
                 </a>
             </div>

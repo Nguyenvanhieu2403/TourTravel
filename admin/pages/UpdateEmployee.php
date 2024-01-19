@@ -285,14 +285,11 @@
             </div>
         </div>
     </div>
-
     <?php require('include/libraryJs-Links.html')?>
-
     <script src="../../admin/assets/js/header.js"></script>
     <script src="../../admin/assets/js/slideBar.js"></script> 
 </body>
 <script>
-   
     $(document).ready(function(){
         if (localStorage.getItem('overlayVisible') === 'true') {
             $('.overlay').show();
@@ -317,7 +314,6 @@
         } else {
             $('.update-employee-form').hide();
         }
-
         // Display detail information employee
         $('.employee-row').click(function(){
             var employeeId = $(this).find('.idEmployee').text();
@@ -332,7 +328,6 @@
             localStorage.setItem('overlayVisible', 'false');
             localStorage.setItem('displayEmployeeForm', 'false');
         }); 
-        
         // Display delete form employee
         $('.delete-employee-trigger').click(function(e) {
             e.stopPropagation(); 
@@ -342,14 +337,12 @@
             localStorage.setItem('displayDeleteEmployee', 'true');
             $('#employeeForm').submit(); 
         });
-
         $('.close-confirm').click(function () {
             $('.delete-employee-form').hide();
             $('.overlay').hide();
             localStorage.setItem('overlayVisible', 'false');
             localStorage.setItem('displayDeleteEmployee', 'false');
         }); 
-
         // Display update employee form
         $('#btnUpdateEmployeeButton').click(function(e) {
             e.stopPropagation(); 
@@ -360,18 +353,15 @@
             localStorage.setItem('displayEmployeeForm', 'false');
             $('#employeeForm').submit(); 
         });
-
         $('.close-confirm').click(function () {
             $('.update-employee-form').hide();
             $('.overlay').hide();
             localStorage.setItem('overlayVisible', 'false');
             localStorage.setItem('displayUpdateEmployee', 'false');
         }); 
-
         $('#confirmUpdateEmployeeButton').click(function(e){
             localStorage.setItem('overlayVisible', 'false');
             localStorage.setItem('displayUpdateEmployee', 'false');
         })
-
     })
 </script>

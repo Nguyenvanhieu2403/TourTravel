@@ -19,70 +19,49 @@
 						<span>
 							<?php
 								$conn = DbConnection::Connect();
-								 
-								if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postQuarter'])) {
+								if (isset($_POST['postQuarter'])) {
 									$quarter = $_POST['postQuarter'];
-									$sqlTotalRevenue = "SELECT COALESCE(SUM(tour.Price), 0) AS TotalRevenue
-														FROM books
-														LEFT JOIN tour ON books.IdTour = tour.Id
-														WHERE YEAR(books.CreateDate) = YEAR(CURDATE())
-														AND QUARTER(books.CreateDate) = $quarter";
-								
-									$resultTotalRevenue = $conn->query($sqlTotalRevenue);
-								
+									$stmt = $conn->prepare("call totalRevenueInQuater(?,@totalRevenue)");
+									$stmt->bind_param("i",$quarter);
+									$stmt-> execute();
+									$stmt->close();
+									$resultTotalRevenue = $conn->query("select @totalRevenue as TotalRevenue");
 									if ($resultTotalRevenue && $resultTotalRevenue->num_rows > 0) {
 										$rowTotalRevenue = $resultTotalRevenue->fetch_assoc();
 										$totalRevenue = $rowTotalRevenue['TotalRevenue'];
-										?>
-										<?php echo 'Quý ' .$quarter .': '. number_format($totalRevenue) . " $"; ?>
-										<?php
+										echo 'Quý ' .$quarter .': '. number_format($totalRevenue) . " $"; 	
 									} else {
-										?>
-										<span>Không có dữ liệu</span>
-										<?php
+										echo "<span>Không có dữ liệu</span>";
 									}		
 									$conn->close();
 								}
-								else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postMonth'])) {
+								else if (isset($_POST['postMonth'])) {
 									$month = $_POST['postMonth'];
-									$sqlTotalRevenue = "SELECT COALESCE(SUM(tour.Price), 0) AS TotalRevenue
-														FROM books
-														LEFT JOIN tour ON books.IdTour = tour.Id
-														WHERE MONTH(books.CreateDate) = $month";
-								
-									$resultTotalRevenue = $conn->query($sqlTotalRevenue);
-								
+									$stmt = $conn->prepare("call totalRevenueInMonth(?,@totalRevenue)");
+									$stmt->bind_param("i",$month);
+									$stmt->execute();
+									$stmt->close();
+									$resultTotalRevenue = $conn->query("select @totalRevenue as TotalRevenue");
 									if ($resultTotalRevenue && $resultTotalRevenue->num_rows > 0) {
 										$rowTotalRevenue = $resultTotalRevenue->fetch_assoc();
 										$totalRevenue = $rowTotalRevenue['TotalRevenue'];
-										?>
-										<?php echo 'Tháng ' .$month .': '. number_format($totalRevenue) . " $"; ?>
-										<?php
+										echo 'Tháng ' .$month .': '. number_format($totalRevenue) . " $"; 
 									} else {
-										?>
-										<span>Không có dữ liệu</span>
-										<?php
+										echo "<span>Không có dữ liệu</span>";
 									}		
 									$conn->close();
 								}
 								else{
-									$sqlTotalRevenue = "SELECT COALESCE(SUM(tour.Price), 0) AS TotalRevenue
-														FROM books
-														LEFT JOIN tour ON books.IdTour = tour.Id
-														WHERE books.CreateDate >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)";
-								
-									$resultTotalRevenue = $conn->query($sqlTotalRevenue);
-								
-									if ($resultTotalRevenue && $resultTotalRevenue->num_rows > 0) {
+									$stmt =  $conn->prepare("call totalRevenueInYear(@totalRevenue)");
+									$stmt-> execute();
+									$stmt->close();
+									$resultTotalRevenue = $conn->query("select @totalRevenue as TotalRevenue");
+									if($resultTotalRevenue) {
 										$rowTotalRevenue = $resultTotalRevenue->fetch_assoc();
 										$totalRevenue = $rowTotalRevenue['TotalRevenue'];
-										?>
-										<?php echo  '12 tháng: '. number_format($totalRevenue) . " $"; ?>
-										<?php
-									} else {
-										?>
-										<span>Không có dữ liệu</span>
-										<?php
+										echo  '12 tháng: '. number_format($totalRevenue) . " $";
+									}else {
+										echo "<span>Không có dữ liệu</span>";
 									}		
 									$conn->close();
 								}
@@ -92,104 +71,67 @@
                 </div>
 				<div class="col-md-4 ">
                     <div class="block-report block-1 d-flex flex-column justify-content-center align-items-center">
-						<p> <?php 
-									if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postQuarter'])){
-										echo 'Tháng trong quý ' . $_POST['postQuarter'] . ' có thu nhập cao nhất';
-									}
-									else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postMonth'])){
-										echo 'Ngày trong tháng ' . $_POST['postMonth'] . ' có thu nhập cao nhất';
-									}
-									else{
-										echo 'Tháng có thu nhập cao nhất';
-									}
-								?></p>
+						<p> 
+							<?php 
+								if (isset($_POST['postQuarter'])){
+									echo 'Tháng trong quý ' . $_POST['postQuarter'] . ' có thu nhập cao nhất';
+								}else if (isset($_POST['postMonth'])){
+									echo 'Ngày trong tháng ' . $_POST['postMonth'] . ' có thu nhập cao nhất';
+								}else{
+									echo 'Tháng có thu nhập cao nhất';
+								}
+							?>
+						</p>
 						<span>
 							<?php
 								$conn = DbConnection::Connect();
-								if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postQuarter'])) {
+								if (isset($_POST['postQuarter'])) {
 									$quarter = $_POST['postQuarter'];
-									$sqlTotalRevenue = "SELECT MONTH(books.CreateDate) AS Month, COALESCE(SUM(tour.Price), 0) AS MonthlyRevenue
-														FROM books
-														LEFT JOIN tour ON books.IdTour = tour.Id
-														WHERE YEAR(books.CreateDate) = YEAR(CURDATE())
-														AND QUARTER(books.CreateDate) = $quarter
-														GROUP BY Month
-														ORDER BY MonthlyRevenue DESC
-														LIMIT 1";
-								
-									$resultTotalRevenue = $conn->query($sqlTotalRevenue);
-								
+									$stmt = $conn->prepare("call GetMaxRevenueMonthOfQuarter(?,@Month,@revenue)");
+									$stmt->bind_param("i",$quarter);
+									$stmt -> execute();
+									$stmt -> close();
+									$resultTotalRevenue = $conn->query("select @Month as Month, @revenue as MonthlyRevenue;");
 									if ($resultTotalRevenue && $resultTotalRevenue->num_rows > 0) {
 										$rowTotalRevenue = $resultTotalRevenue->fetch_assoc();
 										$totalRevenue = $rowTotalRevenue['MonthlyRevenue'];
 										$hightestMonth = $rowTotalRevenue['Month'];
-										?>
-										<?php echo 'Tháng ' .$hightestMonth .': '. number_format($totalRevenue) . " $"; ?>
-										<?php
+										echo 'Tháng ' .$hightestMonth .': '. number_format($totalRevenue) . " $"; 
 									} else {
-										?>
-										<span>Không có dữ liệu</span>
-										<?php
+										echo "<span>Không có dữ liệu</span>";
 									}		
 									$conn->close();
 								}
-								else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postMonth'])){
+								else if (isset($_POST['postMonth'])){
 									$month = $_POST['postMonth'];
-											$sqlTotalRevenue = "SELECT DAY(books.CreateDate) AS MaxRevenueDay, COALESCE(SUM(tour.Price), 0) AS TotalRevenue
-											FROM books
-											LEFT JOIN tour ON books.IdTour = tour.Id
-											WHERE MONTH(books.CreateDate) = $month
-											GROUP BY MaxRevenueDay
-											ORDER BY TotalRevenue DESC
-											LIMIT 1";
-								
-									$resultTotalRevenue = $conn->query($sqlTotalRevenue);
-								
-									if ($resultTotalRevenue && $resultTotalRevenue->num_rows > 0) {
+									$stmt =  $conn->prepare("call GetMaxRevenueDay(?,@MaxRevenueDay,@TotalRevenue)");
+									$stmt ->bind_param("i",$month);
+									$stmt->execute();
+									$stmt->close();
+									$resultTotalRevenue = $conn->query("select @MaxRevenueDay as MaxRevenueDay, @TotalRevenue as TotalRevenue;");
+									if ($resultTotalRevenue) {
 										$rowTotalRevenue = $resultTotalRevenue->fetch_assoc();
 										$totalRevenue = $rowTotalRevenue['TotalRevenue'];
-										$maxRevenueDay = $rowTotalRevenue['MaxRevenueDay']
-										?>
-										<?php echo 'Ngày ' .$maxRevenueDay .': '. number_format($totalRevenue) . " $"; ?>
-										<?php
+										$maxRevenueDay = $rowTotalRevenue['MaxRevenueDay'];
+										echo 'Ngày ' .$maxRevenueDay .': '. number_format($totalRevenue) . " $";
 									} else {
-										?>
-										<span>Không có dữ liệu</span>
-										<?php
+										echo "<span>Không có dữ liệu</span>";
 									}		
 									$conn->close();
 								}
 								else{
-									$sqlHighestRevenue = "SELECT MONTH(books.CreateDate) AS Month, COALESCE(SUM(tour.Price), 0) AS TotalRevenue
-														FROM books
-														LEFT JOIN tour ON books.IdTour = tour.Id
-														WHERE books.CreateDate >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
-														GROUP BY MONTH(books.CreateDate)
-														HAVING TotalRevenue = (
-															SELECT COALESCE(SUM(tour.Price), 0) AS MaxRevenue
-															FROM books
-															LEFT JOIN tour ON books.IdTour = tour.Id
-															WHERE books.CreateDate >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
-															GROUP BY MONTH(books.CreateDate)
-															ORDER BY MaxRevenue DESC
-															LIMIT 1
-														)
-														ORDER BY TotalRevenue DESC;";
-								
-									$resultHighestRevenue = $conn->query($sqlHighestRevenue);
+									$stmt = $conn->prepare( "call GetMaxRevenueMonthOfYear(@Month,@revenue)");
+									$stmt->execute();
+									$stmt->close();
+									$resultHighestRevenue = $conn->query("select @Month as Month, @revenue as TotalRevenue;");
 								
 									if ($resultHighestRevenue && $resultHighestRevenue->num_rows > 0) {
 										$rowHigestRevenue = $resultHighestRevenue->fetch_assoc();
 										$monthHighestRevenue = $rowHigestRevenue['Month'];
 										$totalRevenue = $rowHigestRevenue['TotalRevenue'];
-										?>
-										<?php  echo "Tháng $monthHighestRevenue: " . number_format($totalRevenue) . " $<br>";?>
-										
-										<?php
+										echo "Tháng $monthHighestRevenue: " . number_format($totalRevenue) . " $<br>";
 									} else {
-										?>
-										<span>Không có dữ liệu</span>
-										<?php
+										echo "<span>Không có dữ liệu</span>";
 									}		
 									$conn->close();
 								}
@@ -199,99 +141,74 @@
                 </div>
 				<div class="col-md-4 ">
                     <div class="block-report block-1 d-flex flex-column justify-content-center align-items-center me-2">
-						<p> <?php 
-									if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postQuarter'])){
-										echo 'Tháng trong quý ' . $_POST['postQuarter'] . ' có thu nhập thấp nhất';
-									}
-									else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postMonth'])){
-										echo 'Ngày trong tháng ' . $_POST['postMonth'] . ' có thu nhập thấp nhất';
-									}
-									else{
-										echo 'Tháng có thu nhập thấp nhất';
-									}
-								?></p>
+						<p> 
+						<?php 
+								if (isset($_POST['postQuarter'])){
+									echo 'Tháng trong quý ' . $_POST['postQuarter'] . ' có thu nhập thấp nhất';
+								}
+								else if (isset($_POST['postMonth'])){
+									echo 'Ngày trong tháng ' . $_POST['postMonth'] . ' có thu nhập thấp nhất';
+								}
+								else{
+									echo 'Tháng có thu nhập thấp nhất';
+								}
+							?>
+						</p>
 						<span>
-						<?php
-							$conn = DbConnection::Connect();
-							if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postQuarter'])) {
-								$quarter = $_POST['postQuarter'];
-								$sqlLowestRevenue = "SELECT MONTH(books.CreateDate) AS Month, COALESCE(SUM(tour.Price), 0) AS MonthlyRevenue
-													FROM books
-													LEFT JOIN tour ON books.IdTour = tour.Id
-													WHERE YEAR(books.CreateDate) = YEAR(CURDATE())
-													AND QUARTER(books.CreateDate) = $quarter
-													GROUP BY Month
-													ORDER BY MonthlyRevenue ASC
-													LIMIT 1";
-							
-								$resultLowestRevenue = $conn->query($sqlLowestRevenue);
-							
-								if ($resultLowestRevenue && $resultLowestRevenue->num_rows > 0) {
-									$rowLowestRevenue = $resultLowestRevenue->fetch_assoc();
-									$lowestMonth = $rowLowestRevenue['Month'];
-									$totalRevenueLowest = $rowLowestRevenue['MonthlyRevenue'];
-									echo "Tháng $lowestMonth: " . number_format($totalRevenueLowest) . " $";
-								} else {
-									echo "Không có dữ liệu";
-								}        
-								$conn->close();
-							}
-							else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postMonth'])){
-								$month = $_POST['postMonth'];
-								$sqlTotalRevenue = "SELECT DAY(books.CreateDate) AS MinRevenueDay, COALESCE(SUM(tour.Price), 0) AS TotalRevenue
-													FROM books
-													LEFT JOIN tour ON books.IdTour = tour.Id
-													WHERE MONTH(books.CreateDate) = $month
-													GROUP BY MinRevenueDay
-													ORDER BY TotalRevenue ASC
-													LIMIT 1";
+							<?php
+								$conn = DbConnection::Connect();
+								if (isset($_POST['postQuarter'])) {
+									$quarter = $_POST['postQuarter'];
+									$stmt = $conn->prepare("call GetMinRevenueMonthOfQuarter(?,@Month,@revenue)");
+									$stmt->bind_param("i",$quarter);
+									$stmt->execute();
+									$stmt->close();
+									$resultLowestRevenue = $conn->query("select @Month as Month, @revenue as MonthlyRevenue;");
 								
-								$resultTotalRevenue = $conn->query($sqlTotalRevenue);
-								
-								if ($resultTotalRevenue && $resultTotalRevenue->num_rows > 0) {
-									$rowTotalRevenue = $resultTotalRevenue->fetch_assoc();
-									$totalRevenue = $rowTotalRevenue['TotalRevenue'];
-									$minRevenueDay = $rowTotalRevenue['MinRevenueDay'];
-									
-									echo 'Ngày ' . $minRevenueDay . ': ' . number_format($totalRevenue) . " $";
-								} else {
-									echo '<span>Không có dữ liệu</span>';
+									if ($resultLowestRevenue && $resultLowestRevenue->num_rows > 0) {
+										$rowLowestRevenue = $resultLowestRevenue->fetch_assoc();
+										$lowestMonth = $rowLowestRevenue['Month'];
+										$totalRevenueLowest = $rowLowestRevenue['MonthlyRevenue'];
+										echo "Tháng $lowestMonth: " . number_format($totalRevenueLowest) . " $";
+									} else {
+										echo "Không có dữ liệu";
+									}        
+									$conn->close();
 								}
-								
-								$conn->close();
-							}
-							else{
-								$sqlLowestRevenue = "SELECT MONTH(books.CreateDate) AS Month, COALESCE(SUM(tour.Price), 0) AS TotalRevenue
-													FROM books
-													LEFT JOIN tour ON books.IdTour = tour.Id
-													WHERE books.CreateDate >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
-													GROUP BY MONTH(books.CreateDate)
-													HAVING TotalRevenue = (
-														SELECT COALESCE(SUM(tour.Price), 0) AS MinRevenue
-														FROM books
-														LEFT JOIN tour ON books.IdTour = tour.Id
-														WHERE books.CreateDate >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
-														GROUP BY MONTH(books.CreateDate)
-														ORDER BY MinRevenue ASC
-														LIMIT 1
-													)
-													ORDER BY TotalRevenue ASC;";
-
-								$resultLowestRevenue = $conn->query($sqlLowestRevenue);
-
-								if ($resultLowestRevenue && $resultLowestRevenue->num_rows > 0) {
-									while ($rowLowestRevenue = $resultLowestRevenue->fetch_assoc()) {
-										$monthLowestRevenue = $rowLowestRevenue['Month'];
-										$totalRevenueLowest = $rowLowestRevenue['TotalRevenue'];
-										echo "Tháng $monthLowestRevenue: " . number_format($totalRevenueLowest) . " $<br>";
+								else if (isset($_POST['postMonth'])){
+									$month = $_POST['postMonth'];
+									$stmt =$conn->prepare("call GetMinRevenueDayInMonth(?,@day, @revenue)");
+									$stmt->bind_param("i",$month);
+									$stmt->execute();
+									$stmt->close();
+									$resultTotalRevenue = $conn->query("select @day as MinRevenueDay, @revenue as TotalRevenue");
+									if ($resultTotalRevenue && $resultTotalRevenue->num_rows > 0) {
+										$rowTotalRevenue = $resultTotalRevenue->fetch_assoc();
+										$totalRevenue = $rowTotalRevenue['TotalRevenue'];
+										$minRevenueDay = $rowTotalRevenue['MinRevenueDay'];
+										echo 'Ngày ' . $minRevenueDay . ': ' . number_format($totalRevenue) . " $";
+									} else {
+										echo '<span>Không có dữ liệu</span>';
 									}
-								} else {
-									echo "Không có dữ liệu";
+									$conn->close();
 								}
-
-								$conn->close();
-							}
-						?>
+								else{
+									$stmt = $conn->prepare("call GetMinRevenueMonthOfYear(@month,@revenue)"); 
+									$stmt -> execute();
+									$stmt -> close();
+									$resultLowestRevenue = $conn->query("select @month as Month, @revenue as TotalRevenue");
+									if ($resultLowestRevenue && $resultLowestRevenue->num_rows > 0) {
+										while ($rowLowestRevenue = $resultLowestRevenue->fetch_assoc()) {
+											$monthLowestRevenue = $rowLowestRevenue['Month'];
+											$totalRevenueLowest = $rowLowestRevenue['TotalRevenue'];
+											echo "Tháng $monthLowestRevenue: " . number_format($totalRevenueLowest) . " $<br>";
+										}
+									} else {
+										echo "Không có dữ liệu";
+									}
+									$conn->close();
+								}
+							?>
 						</span>
 					</div>
                 </div>
@@ -302,56 +219,32 @@
 						<span >Báo cáo theo tháng</span>
 						<form id="monthForm" method="post" class="mt-3">
 							<select name="selectedMonth" id="selectedMonth" onchange="submitFormMonth(this)">
-								<option value="">
-									<?php if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postMonth'])){
-											echo 'Tháng '.$_POST['postMonth'];
-										}
-										else{
-											echo 'Chọn tháng';
-										}
-									?>
-								</option>
-								<option value="1">Tháng 1</option>
-								<option value="2">Tháng 2</option>
-								<option value="3">Tháng 3</option>
-								<option value="4">Tháng 4</option>
-								<option value="5">Tháng 5</option>
-								<option value="6">Tháng 6</option>
-								<option value="7">Tháng 7</option>
-								<option value="8">Tháng 8</option>
-								<option value="9">Tháng 9</option>
-								<option value="10">Tháng 10</option>
-								<option value="11">Tháng 11</option>
-								<option value="12">Tháng 12</option>
+								<option value="">Chọn Tháng</option>
+								<?php 
+									$selectedMonth = isset($_POST['postMonth']) ? $_POST['postMonth'] : '';
+									for ($i = 1; $i <= 12; $i++): 
+								?>
+									<option value="<?= $i ?>" <?= $selectedMonth == $i ? 'selected' : '' ?>>Tháng <?= $i ?></option>
+								<?php endfor; ?>
 							</select>
-							<input type="hidden" name="postMonth" id="postMonth" value = "">
+							<input type="hidden" name="postMonth" id="postMonth" value = "<?= $selectedMonth ?>">
 						</form>
 					</div>
 					<div class="report-quarter">
 						<span>Báo cáo theo quý</span>
 						<form id="quarterForm" method="post" class="mt-3">
 							<select name="selectedQuarterForm" id="selectedQuarterForm" onchange="submitFormQuarter(this)">
-								<option value="">
-									<?php if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postQuarter'])){
-											echo 'Quý '.$_POST['postQuarter'];
-										}
-										else{
-											echo 'Chọn Quý';
-										}
-									?>
-								</option>
-								<option value="1">Quý 1</option>
-								<option value="2">Quý 2</option>
-								<option value="3">Quý 3</option>
-								<option value="4">Quý 4</option>
+								<option value="">Chọn Quý</option>
+								<?php 
+									$selectedQuarter = isset($_POST['postQuarter']) ? $_POST['postQuarter'] : '';
+									for ($i = 1; $i <= 4; $i++): 
+								?>
+									<option value="<?= $i ?>" <?= $selectedQuarter == $i ? 'selected' : '' ?>>Quý <?= $i ?></option>
+								<?php endfor; ?>
 							</select>
-							<input type="hidden" name="postQuarter" id="postQuarter" value = "">
+							<input type="hidden" name="postQuarter" id="postQuarter" value="<?= $selectedQuarter ?>">
 						</form>
 					</div>
-					
-				</div>
-				<div class="col-md-4">
-					
 				</div>
 			</div>
 			<div class="row">
@@ -359,30 +252,45 @@
 					<?php
 						$conn = DbConnection::Connect();
 						$sqlRevenue = "";
-						if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postMonth'])){
+						if (isset($_POST['postMonth'])){
 							$monthNumeric = $_POST['postMonth'];
     						$monthName = date("F", strtotime("2022-$monthNumeric-01"));
 							echo "<h1 class='text-center mb-5 title-report'>Report in $monthName</h1>";
 							$month = $_POST['postMonth'];
 							$revenueInMonth = $_POST['postMonth'];
-											$sqlRevenue = "SELECT DAY(books.CreateDate) AS DayOfMonth, COALESCE(SUM(tour.Price), 0) AS DailyRevenue
+							$sqlRevenue = "	SELECT DAY(books.CreateDate) AS DayOfMonth, COALESCE(SUM(tour.Price), 0) AS DailyRevenue
 											FROM books
 											LEFT JOIN tour ON books.IdTour = tour.Id
 											WHERE YEAR(books.CreateDate) = YEAR(CURDATE())
 											AND MONTH(books.CreateDate) = $month
 											GROUP BY DAY(books.CreateDate)
-											ORDER BY DayOfMonth;
-									";
+											ORDER BY DayOfMonth;";
 							$resultRevenue = $conn->query($sqlRevenue);
 							$dataPoints = array();
 							while ($rowRevenue = $resultRevenue->fetch_assoc()) {
 								$dataPoints[] = array("y" => $rowRevenue["DailyRevenue"], "label" => $rowRevenue["DayOfMonth"]);
 							}
-							
 						}
-						else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['postQuarter'])){
+						else if (isset($_POST['postQuarter'])){
 							$quater = $_POST['postQuarter'];
-							// echo "<h1 class='text-center mb-5 title-report'>Report in Quarter $quarter</h1>";
+							switch ($quarter) {
+								case 1:
+									$quarterName = "the First Quarter";
+									break;
+								case 2:
+									$quarterName = "the Second Quarter";
+									break;
+								case 3:
+									$quarterName = "the Third Quarter";
+									break;
+								case 4:
+									$quarterName = "the Fourth Quarter";
+									break;
+								default:
+									$quarterName = "Invalid Quarter";
+									break;
+							}
+							echo "<h1 class='text-center mb-5 title-report'>Report in $quarterName</h1>";
 							$revenueInquater = $_POST['postQuarter'];
 							$sqlRevenue = "SELECT DAY(books.CreateDate) AS DayOfMonth, COALESCE(SUM(tour.Price), 0) AS DailyRevenue
 											FROM books
@@ -395,15 +303,12 @@
 												OR (MONTH(books.CreateDate) BETWEEN 10 AND 12 AND $revenueInquater = 4)
 											)
 											GROUP BY DAY(books.CreateDate)
-											ORDER BY DayOfMonth
-									";
-
+											ORDER BY DayOfMonth";
 							$resultRevenue = $conn->query($sqlRevenue);
 							$dataPoints = array();
 							while ($rowRevenue = $resultRevenue->fetch_assoc()) {
 								$dataPoints[] = array("y" => $rowRevenue["DailyRevenue"], "label" => $rowRevenue["DayOfMonth"]);
 							}
-							
 						}
 						else{
 							$currentYear = date('Y');
@@ -413,28 +318,22 @@
 									LEFT JOIN tour ON books.IdTour = tour.Id
 									WHERE YEAR(books.CreateDate) = YEAR(CURDATE())
 									GROUP BY MONTH(books.CreateDate)
-									ORDER BY Month;
-									";
+									ORDER BY Month;";
 							$resultRevenue = $conn->query($sqlRevenue);
 							$dataPoints = array();
 							while ($rowRevenue = $resultRevenue->fetch_assoc()) {
 								$dataPoints[] = array("y" => $rowRevenue["TotalRevenue"], "label" => $rowRevenue["Month"]);
 							}
 						}
-						
 					?>
 					<div id="chartContainer" style="height: 370px; width: 100%;"></div>
                 </div>
             </div>
-			
         </div>
     </div>
-
-
     <?php require(__DIR__. '\\include\\libraryJs-Links.html')?>
     <script src="../../../admin/assets/js/header.js"></script> 
     <script src="../../../admin/assets/js/slideBar.js"></script>
-	<!--  -->
 	<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 	<script>
 		window.onload = function() {
@@ -459,19 +358,21 @@
 		// Handle not from template
 		function submitFormMonth(selectElement) {
 			var selectedMonthValue = selectElement.value;
+			if (selectedMonthValue === "") {
+				return;
+			}
 			document.getElementById("postMonth").value = selectedMonthValue;
-			// Access the form and submit it
 			var form = document.getElementById("monthForm");
 			form.submit();
 		}
-
 		function submitFormQuarter(selectElement) {
 			var selectedQuaterValue = selectElement.value;
+			if (selectedQuaterValue === "") {
+				return;
+			}
 			document.getElementById("postQuarter").value = selectedQuaterValue;
-			// Access the form and submit it
 			var form = document.getElementById("quarterForm");
 			form.submit();
 		}
-
 	</script>
 </body>
